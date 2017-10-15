@@ -58,6 +58,17 @@ getattr(yfs_client::inum inum, struct stat &st)
         st.st_ctime = info.ctime;
         st.st_size = info.size;
         printf("   getattr -> %llu\n", info.size);
+    } else if(yfs->issymlink(inum)) {
+    	yfs_client::symlinkinfo info;
+        ret = yfs->getsymlink(inum, info);
+        if(ret != yfs_client::OK)
+            return ret;
+        st.st_mode = S_IFLNK | 0777;
+        st.st_nlink = 1;
+        st.st_atime = info.atime;
+        st.st_mtime = info.mtime;
+        st.st_ctime = info.ctime;
+        printf("   getattr -> %llu\n", info.size);
     } else {
         yfs_client::dirinfo info;
         ret = yfs->getdir(inum, info);
@@ -457,6 +468,34 @@ fuseserver_statfs(fuse_req_t req)
     fuse_reply_statfs(req, &buf);
 }
 
+void fuseserver_symlink(fuse_req_t req,const char *link,fuse_ino_t parent,const char *name)
+{
+	std::cout<<"[fuse] void fuseserver_symlink begin"<<std::endl;
+	fuse_entry_param e;
+	e.attr_timeout = 0.0;
+    e.entry_timeout = 0.0;
+    e.generation = 0;
+	yfs_client::status result=yfs->symlink(parent,name,link,(yfs_client::inum &)e.ino);
+	std::cout<<"[fuse] void fuseserver_symlink e.ino="<<e.ino<<std::endl;
+	if(result==yfs_client::OK)
+		fuse_reply_entry(req,&e);
+	else if(result==yfs_client::EXIST)
+		fuse_reply_err(req,EEXIST);
+	else
+		fuse_reply_err(req,ENOENT);
+	std::cout<<"[fuse] void fuseserver_symlink end"<<std::endl;
+}
+
+void fuseserver_readlink(fuse_req_t req, fuse_ino_t ino)
+{
+	std::string path;
+	yfs_client::status result=yfs->readlink(ino,path);
+	if(result==yfs_client::OK)
+		fuse_reply_readlink(req,path.c_str());
+	else
+		fuse_reply_err(req, ENOENT);
+}
+
 struct fuse_lowlevel_ops fuseserver_oper;
 
 int
@@ -504,7 +543,9 @@ main(int argc, char *argv[])
      * routines here to implement symbolic link,
      * rmdir, etc.
      * */
-
+    fuseserver_oper.symlink    = fuseserver_symlink;
+	fuseserver_oper.readlink   = fuseserver_readlink;
+	
     const char *fuse_argv[20];
     int fuse_argc = 0;
     fuse_argv[fuse_argc++] = argv[0];

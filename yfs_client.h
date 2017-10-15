@@ -5,7 +5,7 @@
 //#include "yfs_protocol.h"
 #include "extent_client.h"
 #include <vector>
-
+#include <cstring>
 
 class yfs_client {
   extent_client *ec;
@@ -22,6 +22,12 @@ class yfs_client {
     unsigned long ctime;
   };
   struct dirinfo {
+    unsigned long atime;
+    unsigned long mtime;
+    unsigned long ctime;
+  };
+  struct symlinkinfo {
+    unsigned long long size;
     unsigned long atime;
     unsigned long mtime;
     unsigned long ctime;
@@ -55,6 +61,10 @@ class yfs_client {
   int mkdir(inum , const char *, mode_t , inum &);
   
   /** you may need to add symbolic link related methods here.*/
+  bool issymlink(inum);
+  int symlink(inum,const char *,const char *,inum &);
+  int getsymlink(inum inum, symlinkinfo &sin);
+  int readlink(inum,std::string&);
 };
 
 #endif 
