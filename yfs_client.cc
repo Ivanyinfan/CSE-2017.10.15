@@ -48,7 +48,7 @@ yfs_client::isfile(inum inum)
         return true;
     } 
     //printf("isfile: %lld is a dir\n", inum);
-    std::cout<<"[yfs_client] bool yfs_client isfile "<<inum<<" is not a file"<<std::endl;
+    //std::cout<<"[yfs_client] bool yfs_client isfile "<<inum<<" is not a file"<<std::endl;
     return false;
 }
 /** Your code here for Lab...
@@ -76,7 +76,7 @@ bool yfs_client::issymlink(inum inum)
 
 int yfs_client::symlink(inum parent,const char *name,const char *link,inum &ino_out)
 {
-	std::cout<<"[yfs_client] int yfs_client::symlink begin"<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::symlink begin"<<std::endl;
 	if(!isdir(parent))
         return IOERR;
 	bool found=false;
@@ -92,7 +92,7 @@ int yfs_client::symlink(inum parent,const char *name,const char *link,inum &ino_
 	std::string sname=name;
 	std::string sinum=filename(ino_out);
 	buf.append("/"+sname+"/"+sinum);
-	std::cout<<"[yfs_client] int yfs_client::symlink buf="<<buf<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::symlink buf="<<buf<<std::endl;
 	if(ec->put(parent,buf)!=extent_protocol::OK)
 		return IOERR;
 	/*size_t bytes_written;
@@ -101,7 +101,7 @@ int yfs_client::symlink(inum parent,const char *name,const char *link,inum &ino_
 		return IOERR;*/
 	if (ec->put(ino_out, std::string(link)) != extent_protocol::OK)
         return IOERR;
-	std::cout<<"[yfs_client] int yfs_client::symlink end"<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::symlink end"<<std::endl;
 	return OK;
 }
 
@@ -119,11 +119,11 @@ int yfs_client::getsymlink(inum inum, symlinkinfo &sin)
 
 int yfs_client::readlink(inum inum,std::string &path)
 {
-	std::cout<<"[yfs_client] int yfs_client::readlink begin"<<std::endl;
-	std::cout<<"[yfs_client] int yfs_client::readlink inum="<<inum<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::readlink begin"<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::readlink inum="<<inum<<std::endl;
 	if (ec->get(inum, path) != extent_protocol::OK)
         return IOERR;
-    std::cout<<"[yfs_client] int yfs_client::readlink end"<<std::endl;
+    //std::cout<<"[yfs_client] int yfs_client::readlink end"<<std::endl;
 	return OK;
 }
 
@@ -131,7 +131,7 @@ bool
 yfs_client::isdir(inum inum)
 {
     // Oops! is this still correct when you implement symlink?
-    std::cout<<"[yfs_client] int yfs_client::isdir begin"<<std::endl;
+    //std::cout<<"[yfs_client] int yfs_client::isdir begin"<<std::endl;
     return ! isfile(inum)&&!issymlink(inum);
 }
 
@@ -196,7 +196,7 @@ yfs_client::setattr(inum ino, size_t size)
      * note: get the content of inode ino, and modify its content
      * according to the size (<, =, or >) content length.
      */
-    std::cout<<"[yfs_client] int yfs_client::setattr begin"<<std::endl;
+    //std::cout<<"[yfs_client] int yfs_client::setattr begin"<<std::endl;
 	std::string buf;
     fileinfo fin;
     if(getfile(ino, fin) != OK)
@@ -209,7 +209,7 @@ yfs_client::setattr(inum ino, size_t size)
         buf.append(size-fin.size,'\0');
     if(ec->put(ino,buf) != extent_protocol::OK)
         return IOERR;
-    std::cout<<"[yfs_client] int yfs_client::setattr end"<<std::endl;
+    //std::cout<<"[yfs_client] int yfs_client::setattr end"<<std::endl;
     return r;
 }
 
@@ -223,8 +223,8 @@ yfs_client::create(inum parent, const char *name, mode_t mode, inum &ino_out)
      * note: lookup is what you need to check if file exist;
      * after create file or dir, you must remember to modify the parent infomation.
      */
-    std::cout<<"[yfs_client] int yfs_client::create begin"<<std::endl;
-    std::cout<<"[yfs_client] int yfs_client::create parent="<<parent<<std::endl;
+    //std::cout<<"[yfs_client] int yfs_client::create begin"<<std::endl;
+    //std::cout<<"[yfs_client] int yfs_client::create parent="<<parent<<std::endl;
 	bool found = false;
 	if(lookup(parent,name,found,ino_out) != OK)
 		return IOERR;
@@ -243,7 +243,7 @@ yfs_client::create(inum parent, const char *name, mode_t mode, inum &ino_out)
 	buf.append("/" + sname + "/" + sinum);
 	if(ec->put(parent,buf) != extent_protocol::OK)
 		return IOERR;
-	std::cout<<"[yfs_client] int yfs_client::create end"<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::create end"<<std::endl;
     return r;
 }
 
@@ -257,7 +257,7 @@ yfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &ino_out)
      * note: lookup is what you need to check if directory exist;
      * after create file or dir, you must remember to modify the parent infomation.
      */
-    std::cout<<"[yfs_client] int yfs_client::mkdir begin"<<std::endl;
+    //std::cout<<"[yfs_client] int yfs_client::mkdir begin"<<std::endl;
 	bool found=false;
 	if(lookup(parent,name,found,ino_out)!=OK)
 		return IOERR;
@@ -276,7 +276,7 @@ yfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &ino_out)
 	buf.append("/"+sname+"/"+sinum);
 	if(ec->put(parent,buf) != extent_protocol::OK)
 		return IOERR;
-	std::cout<<"[yfs_client] int yfs_client::mkdir end"<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::mkdir end"<<std::endl;
     return r;
 }
 
@@ -290,8 +290,8 @@ yfs_client::lookup(inum parent, const char *name, bool &found, inum &ino_out)
      * note: lookup file from parent dir according to name;
      * you should design the format of directory content.
      */
-	std::cout<<"[yfs_client] int yfs_client::lookup begin"<<std::endl;
-	std::cout<<"[yfs_client] int yfs_client::lookup name="<<name<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::lookup begin"<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::lookup name="<<name<<std::endl;
 	std::list<dirent> list;
 	found=false;
 	if(readdir(parent,list)!= OK)
@@ -306,7 +306,7 @@ yfs_client::lookup(inum parent, const char *name, bool &found, inum &ino_out)
 			break;
 		}
 	}
-	std::cout<<"[yfs_client] int yfs_client::lookup end"<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::lookup end"<<std::endl;
     return r;
 }
 
@@ -320,7 +320,7 @@ yfs_client::readdir(inum dir, std::list<dirent> &list)
      * note: you should parse the dirctory content using your defined format,
      * and push the dirents to the list.
      */
-	std::cout<<"[yfs_client] int yfs_client::readdir begin"<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::readdir begin"<<std::endl;
 	std::string buf;
 	fileinfo fin;
 	if(!isdir(dir))
@@ -338,12 +338,12 @@ yfs_client::readdir(inum dir, std::list<dirent> &list)
 		temp.name=tokenPtr;
 		tokenPtr=strtok(NULL,"/");
 		temp.inum=atoi(tokenPtr);
-		std::cout<<"[yfs_client] int yfs_client::readdir temp.name="<<temp.name<<std::endl;
-		std::cout<<"[yfs_client] int yfs_client::readdir temp.inum="<<temp.inum<<std::endl;
+		//std::cout<<"[yfs_client] int yfs_client::readdir temp.name="<<temp.name<<std::endl;
+		//std::cout<<"[yfs_client] int yfs_client::readdir temp.inum="<<temp.inum<<std::endl;
 		list.push_back(temp);
 		tokenPtr=strtok(NULL,"/");
 	}
-	std::cout<<"[yfs_client] int yfs_client::readdir end"<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::readdir end"<<std::endl;
     return r;
 }
 
@@ -409,7 +409,7 @@ yfs_client::write(inum ino, size_t size, off_t off, const char *data,
 		if(ec->put(ino,buf) != extent_protocol::OK)
 			return IOERR;
 	}*/
-	std::cout<<"[yfs_client] int yfs_client::write begin"<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::write begin"<<std::endl;
 	std::string buf;
     if (ec->get(ino, buf) != extent_protocol::OK)
         return IOERR;
@@ -420,7 +420,7 @@ yfs_client::write(inum ino, size_t size, off_t off, const char *data,
         buf[i] = data[i-off];
     if (ec->put(ino, buf) != extent_protocol::OK)
         return IOERR;
-	std::cout<<"[yfs_client] int yfs_client::write end"<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::write end"<<std::endl;
     return r;
 }
 
@@ -433,7 +433,7 @@ int yfs_client::unlink(inum parent,const char *name)
      * note: you should remove the file using ec->remove,
      * and update the parent directory content.
      */
-    std::cout<<"[yfs_client] int yfs_client::unlink begin"<<std::endl;
+    //std::cout<<"[yfs_client] int yfs_client::unlink begin"<<std::endl;
 	bool found = false;
 	inum ino_out;
 	if(lookup(parent,name,found,ino_out) != OK)

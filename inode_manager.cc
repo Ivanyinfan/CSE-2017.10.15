@@ -301,19 +301,19 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size)
    * is larger or smaller than the size of original inode.
    * you should free some blocks if necessary.
    */
-	std::cout<<"[inode_manager] void inode_manager::write_file begin"<<std::endl;
-	std::cout<<"[inode_manager] void inode_manager::write_file size="<<size<<std::endl;
+	//std::cout<<"[inode_manager] void inode_manager::write_file begin"<<std::endl;
+	//std::cout<<"[inode_manager] void inode_manager::write_file size="<<size<<std::endl;
 	timespec time;
 	clock_gettime(CLOCK_REALTIME,&time);
     inode *tmp=get_inode(inum);
     int origBlocks=ceil((double)tmp->size/BLOCK_SIZE);
     int needBlocks=ceil((double)size/BLOCK_SIZE);
-    std::cout<<"[inode_manager] origBlocks:"<<origBlocks<<std::endl;
-    std::cout<<"[inode_manager] needBlocks:"<<needBlocks<<std::endl;
+    //std::cout<<"[inode_manager] origBlocks:"<<origBlocks<<std::endl;
+    //std::cout<<"[inode_manager] needBlocks:"<<needBlocks<<std::endl;
     const char *tmpbuf=buf;
     if(needBlocks<=origBlocks)
     {
-    	std::cout<<"[inode_manager] needBlocks<=origBlocks"<<std::endl;
+    	//std::cout<<"[inode_manager] needBlocks<=origBlocks"<<std::endl;
 		for(int i=0;i<MIN(needBlocks,NDIRECT);++i)
 		{
 	    	bm->write_block(tmp->blocks[i],tmpbuf);
@@ -353,7 +353,7 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size)
     }
     else//needBlocks>origBlocks
     {
-    	std::cout<<"[inode_manager] needBlocks>origBlocks"<<std::endl;
+    	//std::cout<<"[inode_manager] needBlocks>origBlocks"<<std::endl;
     	if(origBlocks>NDIRECT)
     	{
     		for(int i=0;i<NDIRECT;++i)
@@ -385,17 +385,17 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size)
 		}
 		else//needBlocks>origBlocks;origBlocks<=NDIRECT
 		{
-			std::cout<<"[inode_manager] origBlocks<=NDIRECT"<<std::endl;
+			//std::cout<<"[inode_manager] origBlocks<=NDIRECT"<<std::endl;
 			for(int i=0;i<origBlocks;++i)
 			{
-				std::cout<<"[inode_manager] i="<<i<<std::endl;
+				//std::cout<<"[inode_manager] i="<<i<<std::endl;
 	    		bm->write_block(tmp->blocks[i],tmpbuf);
 	    		tmpbuf+=BLOCK_SIZE;
 			}
 			uint32_t newBlock;
 			if(needBlocks>NDIRECT)
 			{
-				std::cout<<"[inode_manager] needBlocks>NDIRECT"<<std::endl;
+				//std::cout<<"[inode_manager] needBlocks>NDIRECT"<<std::endl;
 				int left=NDIRECT-origBlocks;
 				for(int i=0;i<left;++i)
 				{
@@ -419,13 +419,13 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size)
 			}
 			else//needBlocks>origBlocks;origBlocks<=NDIRECT;needBlocks<=NDIRECT
 			{
-				std::cout<<"[inode_manager] needBlocks<=NDIRECT"<<std::endl;
+				//std::cout<<"[inode_manager] needBlocks<=NDIRECT"<<std::endl;
 				int left=needBlocks-origBlocks;
-				std::cout<<"[inode_manager] left="<<left<<std::endl;
+				//std::cout<<"[inode_manager] left="<<left<<std::endl;
 				for(int i=0;i<left;++i)
 				{
 					newBlock=bm->alloc_block();
-					std::cout<<"[inode_manager] newBlock:"<<newBlock<<std::endl;
+					//std::cout<<"[inode_manager] newBlock:"<<newBlock<<std::endl;
 					tmp->blocks[origBlocks+i]=newBlock;
 					bm->write_block(newBlock,tmpbuf);
 					tmpbuf+=BLOCK_SIZE;
@@ -437,7 +437,7 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size)
 	tmp->mtime=time.tv_nsec;
 	tmp->ctime=time.tv_nsec;
 	put_inode(inum,tmp);
-	std::cout<<"[inode_manager] void inode_manager::write_file end"<<std::endl;
+	//std::cout<<"[inode_manager] void inode_manager::write_file end"<<std::endl;
 }
 
 void
