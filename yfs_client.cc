@@ -440,15 +440,10 @@ int yfs_client::unlink(inum parent,const char *name)
 		return IOERR;
 	if (found == false)
 		return NOENT;
-	if(isdir(ino_out))
-		return IOERR;
 	if(ec->remove(ino_out) != extent_protocol::OK)
 		return IOERR;
 	std::string buf;
-	fileinfo fin;
-	if(getfile(parent,fin)!= OK)
-		return IOERR;
-	if(read(parent,fin.size,0,buf) != OK)
+	if(ec->get(parent,buf)!=extent_protocol::OK)
 		return IOERR;
 	size_t pos = buf.find(name);
 	size_t size = strlen(name) + filename(ino_out).size() + 2;
