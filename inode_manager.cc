@@ -10,33 +10,19 @@ disk::disk()
 void
 disk::read_block(blockid_t id, char *buf)
 {
-  /*
-   *your lab1 code goes here.
-   *if id is smaller than 0 or larger than BLOCK_NUM 
-   *or buf is null, just return.
-   *put the content of target block into buf.
-   *hint: use memcpy
-   */
-    //std::cout<<"void disk::read_block begin"<<std::endl;
-    if(id<0||id>BLOCK_NUM)
-		return;
-    if(buf==NULL)
-		return;
-    memcpy(buf,blocks[id],BLOCK_SIZE);
-    //std::cout<<"void disk::read_block end"<<std::endl;
+  if (id < 0 || id >= BLOCK_NUM || buf == NULL)
+    return;
+
+  memcpy(buf, blocks[id], BLOCK_SIZE);
 }
 
 void
 disk::write_block(blockid_t id, const char *buf)
 {
-  /*
-   *your lab1 code goes here.
-   *hint: just like read_block
-   */
-    if(id<0||id>BLOCK_NUM)
-		return;
-    memcpy(blocks[id],buf,BLOCK_SIZE);
-    //std::cout<<"[inode_manager] void disk::write_block blocks[id]="<<blocks[id]<<std::endl;
+  if (id < 0 || id >= BLOCK_NUM || buf == NULL)
+    return;
+
+  memcpy(blocks[id], buf, BLOCK_SIZE);
 }
 
 // block layer -----------------------------------------
@@ -96,7 +82,6 @@ block_manager::free_block(uint32_t id)
     int left=id-id/BPB*BPB;
     int bit=left-left/8*8;
     buf[left/8]=buf[left/8]^(0x1<<bit);*/
-
 }
 
 // The layout of disk should be like this:

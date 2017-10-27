@@ -9,9 +9,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-yfs_client::yfs_client(std::string extent_dst)
+yfs_client::yfs_client(std::string extent_dst, std::string lock_dst)
 {
   ec = new extent_client(extent_dst);
+  lc = new lock_client(lock_dst);
   if (ec->put(1, "") != extent_protocol::OK)
       printf("error init root dir\n"); // XYB: init root dir
 }
@@ -196,6 +197,7 @@ yfs_client::setattr(inum ino, size_t size)
      * note: get the content of inode ino, and modify its content
      * according to the size (<, =, or >) content length.
      */
+
     //std::cout<<"[yfs_client] int yfs_client::setattr begin"<<std::endl;
 	std::string buf;
     fileinfo fin;
@@ -223,6 +225,7 @@ yfs_client::create(inum parent, const char *name, mode_t mode, inum &ino_out)
      * note: lookup is what you need to check if file exist;
      * after create file or dir, you must remember to modify the parent infomation.
      */
+
     //std::cout<<"[yfs_client] int yfs_client::create begin"<<std::endl;
     //std::cout<<"[yfs_client] int yfs_client::create parent="<<parent<<std::endl;
 	bool found = false;
@@ -257,6 +260,7 @@ yfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &ino_out)
      * note: lookup is what you need to check if directory exist;
      * after create file or dir, you must remember to modify the parent infomation.
      */
+
     //std::cout<<"[yfs_client] int yfs_client::mkdir begin"<<std::endl;
 	bool found=false;
 	if(lookup(parent,name,found,ino_out)!=OK)
@@ -290,6 +294,7 @@ yfs_client::lookup(inum parent, const char *name, bool &found, inum &ino_out)
      * note: lookup file from parent dir according to name;
      * you should design the format of directory content.
      */
+
 	//std::cout<<"[yfs_client] int yfs_client::lookup begin"<<std::endl;
 	//std::cout<<"[yfs_client] int yfs_client::lookup name="<<name<<std::endl;
 	std::list<dirent> list;
@@ -320,6 +325,7 @@ yfs_client::readdir(inum dir, std::list<dirent> &list)
      * note: you should parse the dirctory content using your defined format,
      * and push the dirents to the list.
      */
+
 	//std::cout<<"[yfs_client] int yfs_client::readdir begin"<<std::endl;
 	std::string buf;
 	fileinfo fin;
@@ -356,6 +362,7 @@ yfs_client::read(inum ino, size_t size, off_t off, std::string &data)
      * your lab2 code goes here.
      * note: read using ec->get().
      */
+
 	if(ec->get(ino,data) != extent_protocol::OK)
 		return IOERR;
 	data = data.substr(off,size);
@@ -373,6 +380,7 @@ yfs_client::write(inum ino, size_t size, off_t off, const char *data,
      * note: write using ec->put().
      * when off > length of original file, fill the holes with '\0'.
      */
+
     /*std::cout<<"[yfs_client] int yfs_client::write begin"<<std::endl;
     std::cout<<"[yfs_client] int yfs_client::write size="<<size<<std::endl;
     std::cout<<"[yfs_client] int yfs_client::write off="<<off<<std::endl;
@@ -433,6 +441,7 @@ int yfs_client::unlink(inum parent,const char *name)
      * note: you should remove the file using ec->remove,
      * and update the parent directory content.
      */
+
     //std::cout<<"[yfs_client] int yfs_client::unlink begin"<<std::endl;
 	bool found = false;
 	inum ino_out;
