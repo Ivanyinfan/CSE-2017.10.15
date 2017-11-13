@@ -20,12 +20,10 @@ disk::read_block(blockid_t id, char *buf)
    *put the content of target block into buf.
    *hint: use memcpy
   */
-  if (id < 0 || id >= BLOCK_NUM || buf == NULL) {
-    printf("\tim: error! invalid blockid %d\n", id);
+  if (id < 0 || id >= BLOCK_NUM || buf == NULL)
     return;
-  }
 
-  std::memcpy(buf, blocks[id], BLOCK_SIZE);
+  memcpy(buf, blocks[id], BLOCK_SIZE);
 }
 
 void
@@ -35,12 +33,10 @@ disk::write_block(blockid_t id, const char *buf)
    *your lab1 code goes here.
    *hint: just like read_block
   */
-  if (id < 0 || id >= BLOCK_NUM || buf == NULL) {
-    printf("\tim: error! invalid blockid %d\n", id);
+   if (id < 0 || id >= BLOCK_NUM || buf == NULL)
     return;
-  }
 
-  std::memcpy(blocks[id], buf, BLOCK_SIZE);
+  memcpy(blocks[id], buf, BLOCK_SIZE);
 }
 
 // block layer -----------------------------------------
@@ -54,8 +50,6 @@ block_manager::alloc_block()
    * note: you should mark the corresponding bit in block bitmap when alloc.
    * you need to think about which block you can start to be allocated.
    */
-  // use lock to ensure allocation is thread-safe
-  pthread_mutex_lock(&bitmap_mutex);
   char buf[BLOCK_SIZE];
   blockid_t cur = 0;
   while (cur < sb.nblocks) {
@@ -66,7 +60,6 @@ block_manager::alloc_block()
         if ((buf[i] & mask) == 0) {
           buf[i] = buf[i] | mask;
           write_block(BBLOCK(cur), buf);
-          pthread_mutex_unlock(&bitmap_mutex);
           return cur;
         }
         mask = mask >> 1;
@@ -75,7 +68,6 @@ block_manager::alloc_block()
     }
   }
   printf("\tim: error! out of blocks\n");
-  pthread_mutex_unlock(&bitmap_mutex);
   exit(0);
 }
 
@@ -86,8 +78,6 @@ block_manager::free_block(uint32_t id)
    * your lab1 code goes here.
    * note: you should unmark the corresponding bit in the block bitmap when free.
    */
-  // use lock to ensure free is thread-safe
-  pthread_mutex_lock(&bitmap_mutex);
   char buf[BLOCK_SIZE];
   read_block(BBLOCK(id), buf);
 
@@ -96,21 +86,16 @@ block_manager::free_block(uint32_t id)
   buf[index] = buf[index] & mask;
 
   write_block(BBLOCK(id), buf);
-  pthread_mutex_unlock(&bitmap_mutex);
 }
 
-// The layout of disk should be like this:
-// |<-sb->|<-free block bitmap->|<-inode table->|<-data->|
 block_manager::block_manager()
 {
   d = new disk();
 
-  // format the disk
   sb.size = BLOCK_SIZE * BLOCK_NUM;
   sb.nblocks = BLOCK_NUM;
   sb.ninodes = INODE_NUM;
 
-  /* mark bootblock, superblock, bitmap, inode table region as used */
   char buf[BLOCK_SIZE];
   blockid_t cur = 0;
   blockid_t ending = RESERVED_BLOCK(sb.ninodes, sb.nblocks);
@@ -130,8 +115,6 @@ block_manager::block_manager()
   bzero(buf, sizeof(buf));
   std::memcpy(buf, &sb, sizeof(sb));
   write_block(1, buf);
-
-  pthread_mutex_init(&bitmap_mutex, NULL);
 }
 
 void
@@ -156,7 +139,6 @@ inode_manager::inode_manager()
     printf("\tim: error! alloc first inode %d, should be 1\n", root_dir);
     exit(0);
   }
-  pthread_mutex_init(&inodes_mutex, NULL);
 }
 
 /* Create a new file.
@@ -169,8 +151,6 @@ inode_manager::alloc_inode(uint32_t type)
    * note: the normal inode block should begin from the 2nd inode block.
    * the 1st is used for root_dir, see inode_manager::inode_manager().
    */
-  // use lock to ensure allocation is thread-safe
-  pthread_mutex_lock(&inodes_mutex);
   char buf[BLOCK_SIZE];
   uint32_t cur = 1;
   while (cur <= bm->sb.ninodes) {
@@ -184,14 +164,12 @@ inode_manager::alloc_inode(uint32_t type)
         ino->mtime = std::time(0);
         ino->ctime = std::time(0);
         bm->write_block(IBLOCK(cur, bm->sb.nblocks), buf);
-        pthread_mutex_unlock(&inodes_mutex);
         return cur;
       }
       ++cur;
     }
   }
   printf("\tim: error! out of inodes\n");
-  pthread_mutex_unlock(&inodes_mutex);
   exit(0);
 }
 
@@ -203,19 +181,15 @@ inode_manager::free_inode(uint32_t inum)
    * note: you need to check if the inode is already a freed one;
    * if not, clear it, and remember to write back to disk.
    */
-  // use lock to ensure free is thread-safe
-  pthread_mutex_lock(&inodes_mutex);
   char buf[BLOCK_SIZE];
   bm->read_block(IBLOCK(inum, bm->sb.nblocks), buf);
   inode_t * ino = (inode_t *)buf + (inum - 1) % IPB;
   if (ino->type == 0) {
     printf("\tim: error! inode is already freed\n");
-    pthread_mutex_unlock(&inodes_mutex);
     exit(0);
   } else {
     ino->type = 0;
     bm->write_block(IBLOCK(inum, bm->sb.nblocks), buf);
-    pthread_mutex_unlock(&inodes_mutex);
   }
 }
 
@@ -267,8 +241,6 @@ inode_manager::put_inode(uint32_t inum, struct inode *ino)
 
 #define MIN(a,b) ((a)<(b) ? (a) : (b))
 
-/* Get all the data of a file by inum. 
- * Return alloced data, should be freed by caller. */
 void
 inode_manager::read_file(uint32_t inum, char **buf_out, int *size)
 {
@@ -318,7 +290,6 @@ inode_manager::read_file(uint32_t inum, char **buf_out, int *size)
   free(ino);
 }
 
-/* alloc/free blocks if needed */
 void
 inode_manager::write_file(uint32_t inum, const char *buf, int size)
 {
@@ -334,7 +305,6 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size)
   unsigned int old_block_num = (ino->size + BLOCK_SIZE - 1) / BLOCK_SIZE;
   unsigned int new_block_num = (size + BLOCK_SIZE - 1) / BLOCK_SIZE;
 
-  /* free some blocks */
   if (old_block_num > new_block_num) {
     if (new_block_num > NDIRECT) {
       bm->read_block(ino->blocks[NDIRECT], indirect);
@@ -359,7 +329,6 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size)
     }
   }
 
-  /* new some blocks */
   if (new_block_num > old_block_num) {
     if (new_block_num <= NDIRECT) {
       for (unsigned int i = old_block_num; i < new_block_num; ++i) {
@@ -386,8 +355,6 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size)
       }
     }
   }
-
-  /* write file content */
 
   int cur = 0;
   for (int i = 0; i < NDIRECT && cur < size; ++i) {
@@ -418,7 +385,6 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size)
     }
   }
 
-  /* update inode */
   ino->size = size;
   ino->mtime = std::time(0);
   ino->ctime = std::time(0);

@@ -86,7 +86,6 @@ typedef struct inode {
 class inode_manager {
  private:
   block_manager *bm;
-  pthread_mutex_t inodes_mutex; 
   struct inode* get_inode(uint32_t inum);
   void put_inode(uint32_t inum, struct inode *ino);
 

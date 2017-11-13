@@ -10,25 +10,48 @@ max_readahead=0x00020000
    max_background=0
    congestion_threshold=0
    unique: 1, success, outsize: 40
-unique: 2, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
+unique: 2, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 0
    unique: 2, error: -2 (No such file or directory), outsize: 16
-unique: 3, opcode: MKDIR (9), nodeid: 1, insize: 54, pid: 21684
-isfile: 2 is not a file
+unique: 3, opcode: MKDIR (9), nodeid: 1, insize: 55, pid: 22555
+[yfs_client] int yfs_client::mkdir begin
+[yfs_client] mkdir acquire finish
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 0
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 0
+[yfs_client] int yfs_client::mkdir end
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587879 1510587879 1510587879
+   getattr -> 1510589209 1510589209 1510589209
    unique: 3, success, outsize: 144
-unique: 4, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+unique: 4, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587879 1510587879 1510587879
+   getattr -> 1510589209 1510589209 1510589209
    unique: 4, success, outsize: 144
-unique: 5, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
+unique: 5, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 0
    unique: 5, error: -2 (No such file or directory), outsize: 16
-unique: 6, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 21684
+unique: 6, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 22555
+[yfs_client] int yfs_client::create begin
+[yfs_client] int yfs_client::create parent=2
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 0
+[yfs_client] create lookup end
+[yfs_client] create ec->create end
+[yfs_client] create ec->get end
 isfile: 4 is a file
 getattr 0000000000000004 1
 isfile: 4 is a file
@@ -37,200 +60,317 @@ getfile 0000000000000004 -> sz 0
    getattr -> 0
    unique: 6, success, outsize: 160
 OK: create returns.
-unique: 7, opcode: GETXATTR (22), nodeid: 4, insize: 68, pid: 21684
+unique: 7, opcode: GETXATTR (22), nodeid: 4, insize: 68, pid: 22555
    unique: 7, error: -38 (Function not implemented), outsize: 16
-unique: 8, opcode: WRITE (16), nodeid: 4, insize: 84, pid: 21684
+unique: 8, opcode: WRITE (16), nodeid: 4, insize: 84, pid: 22555
    unique: 8, success, outsize: 24
-unique: 9, opcode: FLUSH (25), nodeid: 4, insize: 64, pid: 21684
+unique: 9, opcode: FLUSH (25), nodeid: 4, insize: 64, pid: 22555
    unique: 9, error: -38 (Function not implemented), outsize: 16
 unique: 10, opcode: RELEASE (18), nodeid: 4, insize: 64, pid: 0
    unique: 10, success, outsize: 16
-unique: 11, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+unique: 11, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587880 1510587880 1510587880
+   getattr -> 1510589210 1510589210 1510589210
    unique: 11, success, outsize: 144
-unique: 12, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
+unique: 12, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 7
    unique: 12, error: -2 (No such file or directory), outsize: 16
-unique: 13, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 21684
-isfile: 7 is a file
-getattr 0000000000000007 1
-isfile: 7 is a file
-getfile 0000000000000007
-getfile 0000000000000007 -> sz 0
+unique: 13, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 22555
+[yfs_client] int yfs_client::create begin
+[yfs_client] int yfs_client::create parent=2
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 7
+[yfs_client] create lookup end
+[yfs_client] create ec->create end
+[yfs_client] create ec->get end
+isfile: 6 is a file
+getattr 0000000000000006 1
+isfile: 6 is a file
+getfile 0000000000000006
+getfile 0000000000000006 -> sz 0
    getattr -> 0
    unique: 13, success, outsize: 160
 OK: create returns.
-unique: 14, opcode: WRITE (16), nodeid: 7, insize: 84, pid: 21684
+unique: 14, opcode: WRITE (16), nodeid: 6, insize: 84, pid: 22555
    unique: 14, success, outsize: 24
-unique: 15, opcode: RELEASE (18), nodeid: 7, insize: 64, pid: 0
+unique: 15, opcode: RELEASE (18), nodeid: 6, insize: 64, pid: 0
    unique: 15, success, outsize: 16
-unique: 16, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+unique: 16, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587880 1510587880 1510587880
+   getattr -> 1510589210 1510589210 1510589210
    unique: 16, success, outsize: 144
-unique: 17, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
+unique: 17, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 14
    unique: 17, error: -2 (No such file or directory), outsize: 16
-unique: 18, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 21684
-isfile: 9 is a file
-getattr 0000000000000009 1
-isfile: 9 is a file
-getfile 0000000000000009
-getfile 0000000000000009 -> sz 0
+unique: 18, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 22555
+[yfs_client] int yfs_client::create begin
+[yfs_client] int yfs_client::create parent=2
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 14
+[yfs_client] create lookup end
+[yfs_client] create ec->create end
+[yfs_client] create ec->get end
+isfile: 8 is a file
+getattr 0000000000000008 1
+isfile: 8 is a file
+getfile 0000000000000008
+getfile 0000000000000008 -> sz 0
    getattr -> 0
    unique: 18, success, outsize: 160
 OK: create returns.
-unique: 19, opcode: WRITE (16), nodeid: 9, insize: 84, pid: 21684
+unique: 19, opcode: WRITE (16), nodeid: 8, insize: 84, pid: 22555
    unique: 19, success, outsize: 24
-unique: 20, opcode: RELEASE (18), nodeid: 9, insize: 64, pid: 0
+unique: 20, opcode: RELEASE (18), nodeid: 8, insize: 64, pid: 0
    unique: 20, success, outsize: 16
-unique: 21, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+unique: 21, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587880 1510587880 1510587880
+   getattr -> 1510589210 1510589210 1510589210
    unique: 21, success, outsize: 144
-unique: 22, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
+unique: 22, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 21
    unique: 22, error: -2 (No such file or directory), outsize: 16
-unique: 23, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 21684
-isfile: 11 is a file
-getattr 000000000000000b 1
-isfile: 11 is a file
-getfile 000000000000000b
-getfile 000000000000000b -> sz 0
+unique: 23, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 22555
+[yfs_client] int yfs_client::create begin
+[yfs_client] int yfs_client::create parent=2
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 21
+[yfs_client] create lookup end
+[yfs_client] create ec->create end
+[yfs_client] create ec->get end
+isfile: 10 is a file
+getattr 000000000000000a 1
+isfile: 10 is a file
+getfile 000000000000000a
+getfile 000000000000000a -> sz 0
    getattr -> 0
    unique: 23, success, outsize: 160
 OK: create returns.
-unique: 24, opcode: WRITE (16), nodeid: 11, insize: 84, pid: 21684
+unique: 24, opcode: WRITE (16), nodeid: 10, insize: 84, pid: 22555
    unique: 24, success, outsize: 24
-unique: 25, opcode: RELEASE (18), nodeid: 11, insize: 64, pid: 0
+unique: 25, opcode: RELEASE (18), nodeid: 10, insize: 64, pid: 0
    unique: 25, success, outsize: 16
-unique: 26, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+unique: 26, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587880 1510587880 1510587880
+   getattr -> 1510589210 1510589210 1510589210
    unique: 26, success, outsize: 144
-unique: 27, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
+unique: 27, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 29
    unique: 27, error: -2 (No such file or directory), outsize: 16
-unique: 28, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 21684
-isfile: 13 is a file
-getattr 000000000000000d 1
-isfile: 13 is a file
-getfile 000000000000000d
-getfile 000000000000000d -> sz 0
+unique: 28, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 22555
+[yfs_client] int yfs_client::create begin
+[yfs_client] int yfs_client::create parent=2
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 29
+[yfs_client] create lookup end
+[yfs_client] create ec->create end
+[yfs_client] create ec->get end
+isfile: 12 is a file
+getattr 000000000000000c 1
+isfile: 12 is a file
+getfile 000000000000000c
+getfile 000000000000000c -> sz 0
    getattr -> 0
    unique: 28, success, outsize: 160
 OK: create returns.
-unique: 29, opcode: WRITE (16), nodeid: 13, insize: 84, pid: 21684
+unique: 29, opcode: WRITE (16), nodeid: 12, insize: 84, pid: 22555
    unique: 29, success, outsize: 24
-unique: 30, opcode: RELEASE (18), nodeid: 13, insize: 64, pid: 0
+unique: 30, opcode: RELEASE (18), nodeid: 12, insize: 64, pid: 0
    unique: 30, success, outsize: 16
-unique: 31, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+unique: 31, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587880 1510587880 1510587880
+   getattr -> 1510589210 1510589210 1510589210
    unique: 31, success, outsize: 144
-unique: 32, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
+unique: 32, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 37
    unique: 32, error: -2 (No such file or directory), outsize: 16
-unique: 33, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 21684
+unique: 33, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 22555
+[yfs_client] int yfs_client::create begin
+[yfs_client] int yfs_client::create parent=2
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 37
+[yfs_client] create lookup end
+[yfs_client] create ec->create end
+[yfs_client] create ec->get end
+isfile: 14 is a file
+getattr 000000000000000e 1
+isfile: 14 is a file
+getfile 000000000000000e
+getfile 000000000000000e -> sz 0
+   getattr -> 0
+   unique: 33, success, outsize: 160
+OK: create returns.
+unique: 34, opcode: WRITE (16), nodeid: 14, insize: 84, pid: 22555
+   unique: 34, success, outsize: 24
+unique: 35, opcode: RELEASE (18), nodeid: 14, insize: 64, pid: 0
+   unique: 35, success, outsize: 16
+unique: 36, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
+getattr 0000000000000002 0
+issymlink: 2 is not a symbolic link
+getdir 0000000000000002
+   getattr -> 1510589210 1510589210 1510589210
+   unique: 36, success, outsize: 144
+unique: 37, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 45
+   unique: 37, error: -2 (No such file or directory), outsize: 16
+unique: 38, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 22555
+[yfs_client] int yfs_client::create begin
+[yfs_client] int yfs_client::create parent=2
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 45
+[yfs_client] create lookup end
+[yfs_client] create ec->create end
+[yfs_client] create ec->get end
 isfile: 16 is a file
 getattr 0000000000000010 1
 isfile: 16 is a file
 getfile 0000000000000010
 getfile 0000000000000010 -> sz 0
    getattr -> 0
-   unique: 33, success, outsize: 160
-OK: create returns.
-unique: 34, opcode: WRITE (16), nodeid: 16, insize: 84, pid: 21684
-   unique: 34, success, outsize: 24
-unique: 35, opcode: RELEASE (18), nodeid: 16, insize: 64, pid: 0
-   unique: 35, success, outsize: 16
-unique: 36, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
-getattr 0000000000000002 0
-isfile: 2 is not a file
-getdir 0000000000000002
-   getattr -> 1510587880 1510587880 1510587880
-   unique: 36, success, outsize: 144
-unique: 37, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
-   unique: 37, error: -2 (No such file or directory), outsize: 16
-unique: 38, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 21684
-isfile: 18 is a file
-getattr 0000000000000012 1
-isfile: 18 is a file
-getfile 0000000000000012
-getfile 0000000000000012 -> sz 0
-   getattr -> 0
    unique: 38, success, outsize: 160
 OK: create returns.
-unique: 39, opcode: WRITE (16), nodeid: 18, insize: 84, pid: 21684
+unique: 39, opcode: WRITE (16), nodeid: 16, insize: 84, pid: 22555
    unique: 39, success, outsize: 24
-unique: 40, opcode: RELEASE (18), nodeid: 18, insize: 64, pid: 0
+unique: 40, opcode: RELEASE (18), nodeid: 16, insize: 64, pid: 0
    unique: 40, success, outsize: 16
-unique: 41, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+unique: 41, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587880 1510587880 1510587880
+   getattr -> 1510589210 1510589210 1510589210
    unique: 41, success, outsize: 144
-unique: 42, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
+unique: 42, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 53
    unique: 42, error: -2 (No such file or directory), outsize: 16
-unique: 43, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 21684
-isfile: 20 is a file
-getattr 0000000000000014 1
-isfile: 20 is a file
-getfile 0000000000000014
-getfile 0000000000000014 -> sz 0
+unique: 43, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 22555
+[yfs_client] int yfs_client::create begin
+[yfs_client] int yfs_client::create parent=2
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 53
+[yfs_client] create lookup end
+[yfs_client] create ec->create end
+[yfs_client] create ec->get end
+isfile: 19 is a file
+getattr 0000000000000013 1
+isfile: 19 is a file
+getfile 0000000000000013
+getfile 0000000000000013 -> sz 0
    getattr -> 0
    unique: 43, success, outsize: 160
 OK: create returns.
-unique: 44, opcode: WRITE (16), nodeid: 20, insize: 84, pid: 21684
+unique: 44, opcode: WRITE (16), nodeid: 19, insize: 84, pid: 22555
    unique: 44, success, outsize: 24
-unique: 45, opcode: RELEASE (18), nodeid: 20, insize: 64, pid: 0
+unique: 45, opcode: RELEASE (18), nodeid: 19, insize: 64, pid: 0
    unique: 45, success, outsize: 16
-unique: 46, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+unique: 46, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587880 1510587880 1510587880
+   getattr -> 1510589210 1510589210 1510589210
    unique: 46, success, outsize: 144
-unique: 47, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
+unique: 47, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 61
    unique: 47, error: -2 (No such file or directory), outsize: 16
-unique: 48, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 21684
-isfile: 22 is a file
-getattr 0000000000000016 1
-isfile: 22 is a file
-getfile 0000000000000016
-getfile 0000000000000016 -> sz 0
+unique: 48, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 22555
+[yfs_client] int yfs_client::create begin
+[yfs_client] int yfs_client::create parent=2
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 61
+[yfs_client] create lookup end
+[yfs_client] create ec->create end
+[yfs_client] create ec->get end
+isfile: 21 is a file
+getattr 0000000000000015 1
+isfile: 21 is a file
+getfile 0000000000000015
+getfile 0000000000000015 -> sz 0
    getattr -> 0
    unique: 48, success, outsize: 160
 OK: create returns.
-unique: 49, opcode: WRITE (16), nodeid: 22, insize: 84, pid: 21684
+unique: 49, opcode: WRITE (16), nodeid: 21, insize: 84, pid: 22555
    unique: 49, success, outsize: 24
-unique: 50, opcode: RELEASE (18), nodeid: 22, insize: 64, pid: 0
+unique: 50, opcode: RELEASE (18), nodeid: 21, insize: 64, pid: 0
    unique: 50, success, outsize: 16
-unique: 51, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+unique: 51, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587880 1510587880 1510587880
+   getattr -> 1510589210 1510589210 1510589210
    unique: 51, success, outsize: 144
-unique: 52, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
+unique: 52, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 69
    unique: 52, error: -2 (No such file or directory), outsize: 16
-unique: 53, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 21684
+unique: 53, opcode: CREATE (35), nodeid: 2, insize: 61, pid: 22555
+[yfs_client] int yfs_client::create begin
+[yfs_client] int yfs_client::create parent=2
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 69
+[yfs_client] create lookup end
+[yfs_client] create ec->create end
+[yfs_client] create ec->get end
 isfile: 23 is a file
 getattr 0000000000000017 1
 isfile: 23 is a file
@@ -239,18 +379,23 @@ getfile 0000000000000017 -> sz 0
    getattr -> 0
    unique: 53, success, outsize: 160
 OK: create returns.
-unique: 54, opcode: WRITE (16), nodeid: 23, insize: 84, pid: 21684
+unique: 54, opcode: WRITE (16), nodeid: 23, insize: 84, pid: 22555
    unique: 54, success, outsize: 24
 unique: 55, opcode: RELEASE (18), nodeid: 23, insize: 64, pid: 0
    unique: 55, success, outsize: 16
-unique: 56, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+unique: 56, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587880 1510587880 1510587880
+   getattr -> 1510589210 1510589210 1510589210
    unique: 56, success, outsize: 144
-unique: 57, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
+unique: 57, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 77
 isfile: 4 is a file
 getattr 0000000000000004 1
 isfile: 4 is a file
@@ -258,178 +403,294 @@ getfile 0000000000000004
 getfile 0000000000000004 -> sz 4
    getattr -> 4
    unique: 57, success, outsize: 144
-unique: 58, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 21684
+unique: 58, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 22555
+[yfs_client] unlink begin
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 77
+[yfs_client] unlink lookup end
+[yfs_client] unlink ec->remove end
+[yfs_client] unlink ec->get end
+[yfs_client] unlink end
    unique: 58, success, outsize: 16
-unique: 59, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+unique: 59, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587881 1510587881 1510587881
+   getattr -> 1510589211 1510589211 1510589211
    unique: 59, success, outsize: 144
-unique: 60, opcode: FORGET (2), nodeid: 4, insize: 48, pid: 0
-unique: 61, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
-isfile: 7 is a file
-getattr 0000000000000007 1
-isfile: 7 is a file
-getfile 0000000000000007
-getfile 0000000000000007 -> sz 4
+unique: 60, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 70
+isfile: 6 is a file
+getattr 0000000000000006 1
+isfile: 6 is a file
+getfile 0000000000000006
+getfile 0000000000000006 -> sz 4
    getattr -> 4
-   unique: 61, success, outsize: 144
-unique: 62, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 21684
-   unique: 62, success, outsize: 16
-unique: 63, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+   unique: 60, success, outsize: 144
+unique: 61, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 22555
+[yfs_client] unlink begin
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 70
+[yfs_client] unlink lookup end
+[yfs_client] unlink ec->remove end
+[yfs_client] unlink ec->get end
+[yfs_client] unlink end
+   unique: 61, success, outsize: 16
+unique: 62, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587881 1510587881 1510587881
+   getattr -> 1510589211 1510589211 1510589211
+   unique: 62, success, outsize: 144
+unique: 63, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 63
+isfile: 8 is a file
+getattr 0000000000000008 1
+isfile: 8 is a file
+getfile 0000000000000008
+getfile 0000000000000008 -> sz 4
+   getattr -> 4
    unique: 63, success, outsize: 144
-unique: 64, opcode: FORGET (2), nodeid: 7, insize: 48, pid: 0
-unique: 65, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
-isfile: 9 is a file
-getattr 0000000000000009 1
-isfile: 9 is a file
-getfile 0000000000000009
-getfile 0000000000000009 -> sz 4
-   getattr -> 4
+unique: 64, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 22555
+[yfs_client] unlink begin
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 63
+[yfs_client] unlink lookup end
+[yfs_client] unlink ec->remove end
+[yfs_client] unlink ec->get end
+[yfs_client] unlink end
+   unique: 64, success, outsize: 16
+unique: 65, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
+getattr 0000000000000002 0
+issymlink: 2 is not a symbolic link
+getdir 0000000000000002
+   getattr -> 1510589211 1510589211 1510589211
    unique: 65, success, outsize: 144
-unique: 66, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 21684
-   unique: 66, success, outsize: 16
-unique: 67, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
-getattr 0000000000000002 0
-isfile: 2 is not a file
-getdir 0000000000000002
-   getattr -> 1510587881 1510587881 1510587881
-   unique: 67, success, outsize: 144
-unique: 68, opcode: FORGET (2), nodeid: 9, insize: 48, pid: 0
-unique: 69, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
-isfile: 11 is a file
-getattr 000000000000000b 1
-isfile: 11 is a file
-getfile 000000000000000b
-getfile 000000000000000b -> sz 4
+unique: 66, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 56
+isfile: 10 is a file
+getattr 000000000000000a 1
+isfile: 10 is a file
+getfile 000000000000000a
+getfile 000000000000000a -> sz 4
    getattr -> 4
+   unique: 66, success, outsize: 144
+unique: 68, opcode: BATCH_FORGET (42), nodeid: 0, insize: 96, pid: 0
+unique: 67, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 22555
+[yfs_client] unlink begin
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 56
+[yfs_client] unlink lookup end
+[yfs_client] unlink ec->remove end
+[yfs_client] unlink ec->get end
+[yfs_client] unlink end
+   unique: 67, success, outsize: 16
+unique: 70, opcode: FORGET (2), nodeid: 10, insize: 48, pid: 0
+unique: 69, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
+getattr 0000000000000002 0
+issymlink: 2 is not a symbolic link
+getdir 0000000000000002
+   getattr -> 1510589211 1510589211 1510589211
    unique: 69, success, outsize: 144
-unique: 70, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 21684
-   unique: 70, success, outsize: 16
-unique: 71, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
-getattr 0000000000000002 0
-isfile: 2 is not a file
-getdir 0000000000000002
-   getattr -> 1510587881 1510587881 1510587881
-   unique: 71, success, outsize: 144
-unique: 72, opcode: FORGET (2), nodeid: 11, insize: 48, pid: 0
-unique: 73, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
-isfile: 13 is a file
-getattr 000000000000000d 1
-isfile: 13 is a file
-getfile 000000000000000d
-getfile 000000000000000d -> sz 4
+unique: 71, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 48
+isfile: 12 is a file
+getattr 000000000000000c 1
+isfile: 12 is a file
+getfile 000000000000000c
+getfile 000000000000000c -> sz 4
    getattr -> 4
-   unique: 73, success, outsize: 144
-unique: 74, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 21684
-   unique: 74, success, outsize: 16
-unique: 75, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+   unique: 71, success, outsize: 144
+unique: 72, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 22555
+[yfs_client] unlink begin
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 48
+[yfs_client] unlink lookup end
+[yfs_client] unlink ec->remove end
+[yfs_client] unlink ec->get end
+[yfs_client] unlink end
+   unique: 72, success, outsize: 16
+unique: 74, opcode: FORGET (2), nodeid: 12, insize: 48, pid: 0
+unique: 73, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587881 1510587881 1510587881
+   getattr -> 1510589211 1510589211 1510589211
+   unique: 73, success, outsize: 144
+unique: 75, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 40
+isfile: 14 is a file
+getattr 000000000000000e 1
+isfile: 14 is a file
+getfile 000000000000000e
+getfile 000000000000000e -> sz 4
+   getattr -> 4
    unique: 75, success, outsize: 144
-unique: 76, opcode: FORGET (2), nodeid: 13, insize: 48, pid: 0
-unique: 77, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
+unique: 76, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 22555
+[yfs_client] unlink begin
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 40
+[yfs_client] unlink lookup end
+[yfs_client] unlink ec->remove end
+[yfs_client] unlink ec->get end
+[yfs_client] unlink end
+   unique: 76, success, outsize: 16
+unique: 78, opcode: FORGET (2), nodeid: 14, insize: 48, pid: 0
+unique: 77, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
+getattr 0000000000000002 0
+issymlink: 2 is not a symbolic link
+getdir 0000000000000002
+   getattr -> 1510589211 1510589211 1510589211
+   unique: 77, success, outsize: 144
+unique: 79, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 32
 isfile: 16 is a file
 getattr 0000000000000010 1
 isfile: 16 is a file
 getfile 0000000000000010
 getfile 0000000000000010 -> sz 4
    getattr -> 4
-   unique: 77, success, outsize: 144
-unique: 78, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 21684
-   unique: 78, success, outsize: 16
-unique: 79, opcode: FORGET (2), nodeid: 16, insize: 48, pid: 0
-unique: 80, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+   unique: 79, success, outsize: 144
+unique: 80, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 22555
+[yfs_client] unlink begin
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 32
+[yfs_client] unlink lookup end
+[yfs_client] unlink ec->remove end
+[yfs_client] unlink ec->get end
+[yfs_client] unlink end
+   unique: 80, success, outsize: 16
+unique: 82, opcode: FORGET (2), nodeid: 16, insize: 48, pid: 0
+unique: 81, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587881 1510587881 1510587881
-   unique: 80, success, outsize: 144
-unique: 81, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
-isfile: 18 is a file
-getattr 0000000000000012 1
-isfile: 18 is a file
-getfile 0000000000000012
-getfile 0000000000000012 -> sz 4
-   getattr -> 4
+   getattr -> 1510589211 1510589211 1510589211
    unique: 81, success, outsize: 144
-unique: 82, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 21684
-   unique: 82, success, outsize: 16
-unique: 83, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
-getattr 0000000000000002 0
-isfile: 2 is not a file
-getdir 0000000000000002
-   getattr -> 1510587881 1510587881 1510587881
+unique: 83, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 24
+isfile: 19 is a file
+getattr 0000000000000013 1
+isfile: 19 is a file
+getfile 0000000000000013
+getfile 0000000000000013 -> sz 4
+   getattr -> 4
    unique: 83, success, outsize: 144
-unique: 84, opcode: FORGET (2), nodeid: 18, insize: 48, pid: 0
-unique: 85, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
-isfile: 20 is a file
-getattr 0000000000000014 1
-isfile: 20 is a file
-getfile 0000000000000014
-getfile 0000000000000014 -> sz 4
-   getattr -> 4
+unique: 84, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 22555
+[yfs_client] unlink begin
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 24
+[yfs_client] unlink lookup end
+[yfs_client] unlink ec->remove end
+[yfs_client] unlink ec->get end
+[yfs_client] unlink end
+   unique: 84, success, outsize: 16
+unique: 86, opcode: FORGET (2), nodeid: 19, insize: 48, pid: 0
+unique: 85, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
+getattr 0000000000000002 0
+issymlink: 2 is not a symbolic link
+getdir 0000000000000002
+   getattr -> 1510589211 1510589211 1510589211
    unique: 85, success, outsize: 144
-unique: 86, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 21684
-   unique: 86, success, outsize: 16
-unique: 87, opcode: FORGET (2), nodeid: 20, insize: 48, pid: 0
-unique: 88, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
-getattr 0000000000000002 0
-isfile: 2 is not a file
-getdir 0000000000000002
-   getattr -> 1510587881 1510587881 1510587881
-   unique: 88, success, outsize: 144
-unique: 89, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 21684
-isfile: 22 is a file
-getattr 0000000000000016 1
-isfile: 22 is a file
-getfile 0000000000000016
-getfile 0000000000000016 -> sz 4
+unique: 87, opcode: LOOKUP (1), nodeid: 2, insize: 45, pid: 22555
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 16
+isfile: 21 is a file
+getattr 0000000000000015 1
+isfile: 21 is a file
+getfile 0000000000000015
+getfile 0000000000000015 -> sz 4
    getattr -> 4
-   unique: 89, success, outsize: 144
-unique: 90, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 21684
-   unique: 90, success, outsize: 16
-unique: 91, opcode: FORGET (2), nodeid: 22, insize: 48, pid: 0
-unique: 92, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
-isfile: 2 is not a file
+   unique: 87, success, outsize: 144
+unique: 88, opcode: UNLINK (10), nodeid: 2, insize: 45, pid: 22555
+[yfs_client] unlink begin
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 16
+[yfs_client] unlink lookup end
+[yfs_client] unlink ec->remove end
+[yfs_client] unlink ec->get end
+[yfs_client] unlink end
+   unique: 88, success, outsize: 16
+unique: 89, opcode: FORGET (2), nodeid: 21, insize: 48, pid: 0
+unique: 90, opcode: LOOKUP (1), nodeid: 1, insize: 47, pid: 22555
+issymlink: 1 is not a symbolic link
+getfile 0000000000000001
+getfile 0000000000000001 -> sz 18
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587881 1510587881 1510587881
-   unique: 92, success, outsize: 144
-unique: 93, opcode: OPENDIR (27), nodeid: 2, insize: 48, pid: 21684
-   unique: 93, success, outsize: 32
-unique: 94, opcode: GETATTR (3), nodeid: 2, insize: 56, pid: 21684
-isfile: 2 is not a file
+   getattr -> 1510589211 1510589211 1510589211
+   unique: 90, success, outsize: 144
+unique: 91, opcode: OPENDIR (27), nodeid: 2, insize: 48, pid: 22555
+   unique: 91, success, outsize: 32
+unique: 92, opcode: GETATTR (3), nodeid: 2, insize: 56, pid: 22555
 getattr 0000000000000002 0
-isfile: 2 is not a file
+issymlink: 2 is not a symbolic link
 getdir 0000000000000002
-   getattr -> 1510587881 1510587881 1510587881
-   unique: 94, success, outsize: 120
-unique: 95, opcode: READDIR (28), nodeid: 2, insize: 80, pid: 21684
+   getattr -> 1510589211 1510589211 1510589211
+   unique: 92, success, outsize: 120
+unique: 93, opcode: READDIR (28), nodeid: 2, insize: 80, pid: 22555
 fuseserver_readdir
-isdir: 2 is a directory
-   unique: 95, success, outsize: 48
-unique: 96, opcode: READDIR (28), nodeid: 2, insize: 80, pid: 21684
+issymlink: 2 is not a symbolic link
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 8
+   unique: 93, success, outsize: 48
+unique: 94, opcode: READDIR (28), nodeid: 2, insize: 80, pid: 22555
 fuseserver_readdir
-isdir: 2 is a directory
-   unique: 96, success, outsize: 16
-unique: 97, opcode: RELEASEDIR (29), nodeid: 2, insize: 64, pid: 0
-   unique: 97, success, outsize: 16
-unique: 98, opcode: BATCH_FORGET (42), nodeid: 0, insize: 96, pid: 0
+issymlink: 2 is not a symbolic link
+issymlink: 2 is not a symbolic link
+getfile 0000000000000002
+getfile 0000000000000002 -> sz 8
+   unique: 94, success, outsize: 16
+unique: 95, opcode: RELEASEDIR (29), nodeid: 2, insize: 64, pid: 0
+   unique: 95, success, outsize: 16
 fuse: failed to unmount /home/stu/devlop/lab/yfs1: Invalid argument

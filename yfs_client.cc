@@ -13,12 +13,9 @@ yfs_client::yfs_client(std::string extent_dst, std::string lock_dst)
 {
   ec = new extent_client(extent_dst);
   lc = new lock_client(lock_dst);
-  lc->acquire(1);
   if (ec->put(1, "") != extent_protocol::OK)
       printf("error init root dir\n"); // XYB: init root dir
-  lc->release(1);
 }
-
 
 yfs_client::inum
 yfs_client::n2i(std::string n)
@@ -42,130 +39,105 @@ yfs_client::isfile(inum inum)
 {
     extent_protocol::attr a;
 
-    lc->acquire(inum);
     if (ec->getattr(inum, a) != extent_protocol::OK) {
         printf("error getting attr\n");
-        lc->release(inum);
         return false;
     }
-    lc->release(inum);
 
     if (a.type == extent_protocol::T_FILE) {
         printf("isfile: %lld is a file\n", inum);
         return true;
     } 
-    printf("isfile: %lld is not a file\n", inum);
+    //printf("isfile: %lld is a dir\n", inum);
+    //std::cout<<"[yfs_client] bool yfs_client isfile "<<inum<<" is not a file"<<std::endl;
     return false;
 }
-
 /** Your code here for Lab...
  * You may need to add routines such as
  * readlink, issymlink here to implement symbolic link.
  * 
  * */
 
-yfs_client::DirTable::DirTable(std::string s)
+bool yfs_client::issymlink(inum inum)
 {
-  size_t cur = 0;
-  size_t next;
-  while (cur < s.size()) {
-    next = s.find('/', cur);
-    std::string name = s.substr(cur, next - cur);
-    cur = next + 1;
-
-    next = s.find('/', cur);
-    inum id = n2i(s.substr(cur, next - cur));
-    cur = next + 1;
-
-    table.insert(std::pair<std::string, inum>(name, id));
-  }
-}
-
-std::string
-yfs_client::DirTable::dump()
-{
-  std::string res = "";
-  for (std::map<std::string, inum>::iterator it = table.begin(); it != table.end(); ++it) {
-    res = res + it->first + "/" + filename(it->second) + "/";
-  }
-  return res;
-}
-
-bool
-yfs_client::DirTable::lookup(std::string name, inum& res)
-{
-  std::map<std::string, inum>::iterator it = table.find(name);
-  if (it != table.end()) {
-    res = it->second;
-    return true;
-  } else {
-    return false;
-  }
-}
-
-void
-yfs_client::DirTable::insert(std::string name, inum id)
-{
-  table.insert(std::pair<std::string, inum>(name, id));
-}
-
-void
-yfs_client::DirTable::list(std::list<dirent> & l)
-{
-  for (std::map<std::string, inum>::iterator it = table.begin(); it != table.end(); ++it) {
-    struct dirent entry;
-    entry.name = it->first;
-    entry.inum = it->second;
-    l.push_back(entry);
-  }
-}
-
-void
-yfs_client::DirTable::erase(std::string name)
-{
-    table.erase(name);
-}
-
-bool
-yfs_client::isdir(inum inum)
-{
-    extent_protocol::attr a;
-
-    lc->acquire(inum);
-    if (ec->getattr(inum, a) != extent_protocol::OK) {
+	extent_protocol::attr a;
+    if(ec->getattr(inum, a)!=extent_protocol::OK)
+    {
         printf("error getting attr\n");
-        lc->release(inum);
         return false;
     }
-    lc->release(inum);
-
-    if (a.type == extent_protocol::T_DIR) {
-        printf("isdir: %lld is a directory\n", inum);
-        return true;
-    } 
-    printf("isdir: %lld is not a directory\n", inum);
-    return false;
-}
-
-bool
-yfs_client::issymlink(inum inum)
-{
-    extent_protocol::attr a;
-
-    lc->acquire(inum);
-    if (ec->getattr(inum, a) != extent_protocol::OK) {
-        printf("error getting attr\n");
-        lc->release(inum);
-        return false;
-    }
-    lc->release(inum);
-
-    if (a.type == extent_protocol::T_SYMLINK) {
+    if(a.type==extent_protocol::T_SYMLINK)
+    {
         printf("issymlink: %lld is a symbolic link\n", inum);
         return true;
     } 
     printf("issymlink: %lld is not a symbolic link\n", inum);
     return false;
+}
+
+int yfs_client::symlink(inum parent,const char *name,const char *link,inum &ino_out)
+{
+	//std::cout<<"[yfs_client] int yfs_client::symlink begin"<<std::endl;
+	lc->acquire(parent);
+	if(!isdir(parent))
+        {lc->release(parent);return IOERR;}
+	bool found=false;
+	if(lookup(parent,name,found,ino_out)!=OK)
+		{lc->release(parent);return IOERR;}
+	if(found)
+		{lc->release(parent);return EXIST;}
+	if(ec->create(extent_protocol::T_SYMLINK,ino_out)!=extent_protocol::OK)
+		{lc->release(parent);return IOERR;}
+	lc->acquire(ino_out);
+    std::string buf;
+	if(ec->get(parent,buf)!=extent_protocol::OK)
+		{lc->release(parent);lc->release(ino_out);return IOERR;}
+	std::string sname=name;
+	std::string sinum=filename(ino_out);
+	buf.append("/"+sname+"/"+sinum);
+	//std::cout<<"[yfs_client] int yfs_client::symlink buf="<<buf<<std::endl;
+	if(ec->put(parent,buf)!=extent_protocol::OK)
+		{lc->release(parent);lc->release(ino_out);return IOERR;}
+	/*size_t bytes_written;
+	int result=write(ino_out,strlen(link),0,link,bytes_written);
+	if(result==IOERR)
+		return IOERR;*/
+	if (ec->put(ino_out, std::string(link)) != extent_protocol::OK)
+        {lc->release(parent);lc->release(ino_out);return IOERR;}
+    lc->release(ino_out);
+	lc->release(parent);
+	//std::cout<<"[yfs_client] int yfs_client::symlink end"<<std::endl;
+	return OK;
+}
+
+int yfs_client::getsymlink(inum inum, symlinkinfo &sin)
+{
+    extent_protocol::attr a;
+    if (ec->getattr(inum, a) != extent_protocol::OK)
+        return IOERR;
+    sin.atime = a.atime;
+    sin.mtime = a.mtime;
+    sin.ctime = a.ctime;
+    sin.size = a.size;
+    return OK;
+}
+
+int yfs_client::readlink(inum inum,std::string &path)
+{
+	//std::cout<<"[yfs_client] int yfs_client::readlink begin"<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::readlink inum="<<inum<<std::endl;
+	if (ec->get(inum, path) != extent_protocol::OK)
+        return IOERR;
+    //std::cout<<"[yfs_client] int yfs_client::readlink end"<<std::endl;
+	return OK;
+}
+
+bool
+yfs_client::isdir(inum inum)
+{
+    // Oops! is this still correct when you implement symlink?
+    //std::cout<<"[yfs_client] int yfs_client::isdir begin"<<std::endl;
+    return ! isfile(inum)&&!issymlink(inum);
 }
 
 int
@@ -175,7 +147,6 @@ yfs_client::getfile(inum inum, fileinfo &fin)
 
     printf("getfile %016llx\n", inum);
     extent_protocol::attr a;
-    lc->acquire(inum);
     if (ec->getattr(inum, a) != extent_protocol::OK) {
         r = IOERR;
         goto release;
@@ -188,7 +159,6 @@ yfs_client::getfile(inum inum, fileinfo &fin)
     printf("getfile %016llx -> sz %llu\n", inum, fin.size);
 
 release:
-    lc->release(inum);
     return r;
 }
 
@@ -199,7 +169,6 @@ yfs_client::getdir(inum inum, dirinfo &din)
 
     printf("getdir %016llx\n", inum);
     extent_protocol::attr a;
-    lc->acquire(inum);
     if (ec->getattr(inum, a) != extent_protocol::OK) {
         r = IOERR;
         goto release;
@@ -209,7 +178,6 @@ yfs_client::getdir(inum inum, dirinfo &din)
     din.ctime = a.ctime;
 
 release:
-    lc->release(inum);
     return r;
 }
 
@@ -234,25 +202,22 @@ yfs_client::setattr(inum ino, size_t size)
      * according to the size (<, =, or >) content length.
      */
 
+    //std::cout<<"[yfs_client] int yfs_client::setattr begin"<<std::endl;
+	std::string buf;
+    fileinfo fin;
     lc->acquire(ino);
-    std::string buf;
-    r = ec->get(ino, buf);
-    if (r != OK) {
-      printf("setattr: file not exist\n");
-      lc->release(ino);
-      return r;
-    }
-
-    buf.resize(size);
-
-    r = ec->put(ino, buf);
-    if (r != OK) {
-      printf("setattr: update failed\n");
-      lc->release(ino);
-      return r;
-    }
-
+    if(getfile(ino, fin) != OK)
+        {lc->release(ino);return IOERR;}
+    if (read(ino,fin.size,0,buf) != OK)
+        {lc->release(ino);return IOERR;}
+    if(fin.size > size)
+        buf = buf.substr(0,size);
+    else if(fin.size < size)
+        buf.append(size-fin.size,'\0');
+    if(ec->put(ino,buf) != extent_protocol::OK)
+        {lc->release(ino);return IOERR;}
     lc->release(ino);
+    //std::cout<<"[yfs_client] int yfs_client::setattr end"<<std::endl;
     return r;
 }
 
@@ -267,38 +232,29 @@ yfs_client::create(inum parent, const char *name, mode_t mode, inum &ino_out)
      * after create file or dir, you must remember to modify the parent infomation.
      */
 
-    lc->acquire(parent);
+    std::cout<<"[yfs_client] int yfs_client::create begin"<<std::endl;
+    std::cout<<"[yfs_client] int yfs_client::create parent="<<parent<<std::endl;
+	bool found = false;
+	lc->acquire(parent);
+	if(lookup(parent,name,found,ino_out) != OK)
+		{lc->release(parent);return IOERR;}
+	std::cout<<"[yfs_client] create lookup end"<<std::endl;
+	if (found)
+		{lc->release(parent);return EXIST;}
+	if( ec->create(extent_protocol::T_FILE, ino_out) != extent_protocol::OK)
+		{lc->release(parent);return IOERR;}
+	std::cout<<"[yfs_client] create ec->create end"<<std::endl;
     std::string buf;
-    r = ec->get(parent, buf);
-    if (r != OK) {
-      printf("create: parent directory not exist\n");
-      lc->release(parent);
-      return r;
-    }
-
-    inum id;
-    DirTable table(buf);
-    if (table.lookup(std::string(name), id)) {
-      printf("create: already exist\n");
-      lc->release(parent);
-      return EXIST;
-    }
-
-    r = ec->create(extent_protocol::T_FILE, ino_out);
-    if (r != OK) {
-      printf("create: creation failure\n");
-      lc->release(parent);
-      return r;
-    }
-    
-    table.insert(std::string(name), ino_out);
-    r = ec->put(parent, table.dump());
-    lc->release(parent);
-    if (r != OK) {
-      printf("create: parent directory update failed\n");
-      return r;
-    }
-
+	if(ec->get(parent,buf)!=extent_protocol::OK)
+		{lc->release(parent);return IOERR;}
+	std::cout<<"[yfs_client] create ec->get end"<<std::endl;
+	std::string sname = name;
+	std::string sinum = filename(ino_out);
+	buf.append("/" + sname + "/" + sinum);
+	if(ec->put(parent,buf) != extent_protocol::OK)
+		{lc->release(parent);return IOERR;}
+	lc->release(parent);
+	//std::cout<<"[yfs_client] int yfs_client::create end"<<std::endl;
     return r;
 }
 
@@ -313,38 +269,29 @@ yfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &ino_out)
      * after create file or dir, you must remember to modify the parent infomation.
      */
 
-    lc->acquire(parent);
-    std::string buf;
-    r = ec->get(parent, buf);
-    if (r != OK) {
-      printf("mkdir: parent directory not exist\n");
-      lc->release(parent);
-      return r;
-    }
-
-    inum id;
-    DirTable table(buf);
-    if (table.lookup(std::string(name), id)) {
-      printf("mkdir: already exist\n");
-      lc->release(parent);
-      return EXIST;
-    }
-
-    r = ec->create(extent_protocol::T_DIR, ino_out);
-    if (r != OK) {
-      printf("mkdir: creation failure\n");
-      lc->release(parent);
-      return r;
-    }
-    
-    table.insert(std::string(name), ino_out);
-    r = ec->put(parent, table.dump());
-    lc->release(parent);
-    if (r != OK) {
-      printf("mkdir: parent directory update failed\n");
-      return r;
-    }
-
+    std::cout<<"[yfs_client] int yfs_client::mkdir begin"<<std::endl;
+	bool found=false;
+	lc->acquire(parent);
+	std::cout<<"[yfs_client] mkdir acquire finish"<<std::endl;
+	if(lookup(parent,name,found,ino_out)!=OK)
+		{lc->release(parent);return IOERR;}
+	if(found)
+		{lc->release(parent);return EXIST;}
+	if(ec->create(extent_protocol::T_DIR,ino_out)!=extent_protocol::OK)
+		{lc->release(parent);return IOERR;}
+	std::string buf;
+	fileinfo fin;
+	if(getfile(parent,fin)!=OK)
+		{lc->release(parent);return IOERR;}
+	if(read(parent,fin.size,0,buf)!=OK)
+		{lc->release(parent);return IOERR;}
+	std::string sname=name;
+	std::string sinum=filename(ino_out);
+	buf.append("/"+sname+"/"+sinum);
+	if(ec->put(parent,buf) != extent_protocol::OK)
+		{lc->release(parent);return IOERR;}
+	lc->release(parent);
+	std::cout<<"[yfs_client] int yfs_client::mkdir end"<<std::endl;
     return r;
 }
 
@@ -359,17 +306,25 @@ yfs_client::lookup(inum parent, const char *name, bool &found, inum &ino_out)
      * you should design the format of directory content.
      */
 
-    lc->acquire(parent);
-    std::string buf;
-    r = ec->get(parent, buf);
-    lc->release(parent);
-    if (r != OK) {
-      printf("lookup: parent directory not exist\n");
-      return r;
-    }
-
-    DirTable table(buf);
-    found = table.lookup(std::string(name), ino_out);
+	//std::cout<<"[yfs_client] int yfs_client::lookup begin"<<std::endl;
+	//std::cout<<"[yfs_client] int yfs_client::lookup name="<<name<<std::endl;
+	std::list<dirent> list;
+	found=false;
+	//lc->acquire(parent);
+	if(readdir(parent,list)!= OK)
+		return IOERR;
+	std::string sname = name;
+	for (std::list<dirent>::iterator it = list.begin(); it !=list.end();it++)
+	{
+		if(sname.compare(it->name) == 0)
+		{
+			found = true;
+			ino_out = it->inum;
+			break;
+		}
+	}
+	//lc->release(parent);
+	//std::cout<<"[yfs_client] int yfs_client::lookup end"<<std::endl;
     return r;
 }
 
@@ -384,17 +339,30 @@ yfs_client::readdir(inum dir, std::list<dirent> &list)
      * and push the dirents to the list.
      */
 
-    lc->acquire(dir);
-    std::string buf;
-    r = ec->get(dir, buf);
-    lc->release(dir);
-    if (r != OK) {
-      printf("readdir: directory not exist\n");
-      return r;
-    }
-
-    DirTable table(buf);
-    table.list(list);
+	//std::cout<<"[yfs_client] int yfs_client::readdir begin"<<std::endl;
+	std::string buf;
+	fileinfo fin;
+	if(!isdir(dir))
+		return NOENT;
+	if(getfile(dir,fin)!= OK)
+		return IOERR;
+	if(read(dir,fin.size,0,buf) != OK)
+		return IOERR;
+	char slist[buf.size()];
+	strcpy(slist,buf.c_str());
+	char *tokenPtr=strtok(slist,"/");
+	dirent temp;
+	while (tokenPtr!=NULL)
+	{
+		temp.name=tokenPtr;
+		tokenPtr=strtok(NULL,"/");
+		temp.inum=atoi(tokenPtr);
+		//std::cout<<"[yfs_client] int yfs_client::readdir temp.name="<<temp.name<<std::endl;
+		//std::cout<<"[yfs_client] int yfs_client::readdir temp.inum="<<temp.inum<<std::endl;
+		list.push_back(temp);
+		tokenPtr=strtok(NULL,"/");
+	}
+	//std::cout<<"[yfs_client] int yfs_client::readdir end"<<std::endl;
     return r;
 }
 
@@ -408,21 +376,9 @@ yfs_client::read(inum ino, size_t size, off_t off, std::string &data)
      * note: read using ec->get().
      */
 
-    lc->acquire(ino);
-    std::string buf;
-    r = ec->get(ino, buf);
-    lc->release(ino);
-    if (r != OK) {
-      printf("read: file not exist\n");
-      return r;
-    }
-
-    if (off < (int)buf.size()) {
-      data = buf.substr(off, size);
-    } else {
-      data = "";
-    }
-
+	if(ec->get(ino,data) != extent_protocol::OK)
+		return IOERR;
+	data = data.substr(off,size);
     return r;
 }
 
@@ -438,31 +394,56 @@ yfs_client::write(inum ino, size_t size, off_t off, const char *data,
      * when off > length of original file, fill the holes with '\0'.
      */
 
-    lc->acquire(ino);
-    std::string buf;
-    r = ec->get(ino, buf);
-    if (r != OK) {
-      printf("write: file not exist\n");
-      lc->release(ino);
-      return r;
-    }
-
-    if (buf.size() < off + size) {
-      buf.resize(off + size);
-    }
-
-    for (unsigned int i = 0; i < size; ++i) {
-      buf[off + i] = data[i];
-    }
-
-    r = ec->put(ino, buf);
+    /*std::cout<<"[yfs_client] int yfs_client::write begin"<<std::endl;
+    std::cout<<"[yfs_client] int yfs_client::write size="<<size<<std::endl;
+    std::cout<<"[yfs_client] int yfs_client::write off="<<off<<std::endl;
+	std::string buf;
+	fileinfo fin;
+	if(getfile(ino,fin)!= OK)
+		return IOERR;
+	if(read(ino,fin.size,0,buf) != OK)
+		return IOERR;
+	std::cout<<"[yfs_client] int yfs_client::write buf.size()="<<buf.size()<<std::endl;
+	std::string sdata = data;
+	sdata = sdata.substr(0,size);
+	int newSize = off+size;
+	if(off > (int)buf.size())
+	{	
+		std::string write_buf;
+		write_buf.resize(newSize);
+		for(int i=0;i<(int)buf.size();i++)
+			write_buf[i] = buf[i];
+		for(int i=buf.size();i<off;i++)
+			write_buf[i] = '\0';
+		for(int i=off;i<newSize;i++)
+			write_buf[i] = sdata[i-off];
+		if(ec->put(ino,write_buf) != extent_protocol::OK)
+			return IOERR;
+		bytes_written=newSize-buf.size();
+	}
+	else
+	{
+		buf.resize(off+size);
+		buf.replace(off,size,sdata);
+		//std::cout<<"[yfs_client] int yfs_client::buf="<<buf<<std::endl;
+		bytes_written = size;
+		if(ec->put(ino,buf) != extent_protocol::OK)
+			return IOERR;
+	}*/
+	//std::cout<<"[yfs_client] int yfs_client::write begin"<<std::endl;
+	std::string buf;
+	lc->acquire(ino);
+    if (ec->get(ino, buf) != extent_protocol::OK)
+        {lc->release(ino);return IOERR;}
+    size_t len = buf.length();
+    if ((size_t)(off+size) >= len)
+        buf.resize(off+size);
+    for (size_t i=off; i<off+size; i++)
+        buf[i] = data[i-off];
+    if (ec->put(ino, buf) != extent_protocol::OK)
+        {lc->release(ino);return IOERR;}
     lc->release(ino);
-    if (r != OK) {
-      printf("write: failed\n");
-      return r;
-    }
-    bytes_written = size;
-
+	//std::cout<<"[yfs_client] int yfs_client::write end"<<std::endl;
     return r;
 }
 
@@ -476,105 +457,31 @@ int yfs_client::unlink(inum parent,const char *name)
      * and update the parent directory content.
      */
 
-    lc->acquire(parent);
-    std::string buf;
-    r = ec->get(parent, buf);
-    if (r != OK) {
-      printf("unlink: parent directory not exist\n");
-      lc->release(parent);
-      return r;
-    }
-
-    inum id;
-    DirTable table(buf);
-    if (!table.lookup(std::string(name), id)) {
-      printf("unlink: file not found\n");
-      lc->release(parent);
-      return NOENT;
-    }
-
-    table.erase(std::string(name));
-    r = ec->put(parent, table.dump());
-    lc->release(parent);
-    if (r != OK) {
-      printf("unlink: parent directory update failed\n");
-      return r;
-    }
-
-    lc->acquire(id);
-    r = ec->remove(id);
-    lc->release(id);
-    if (r != OK) {
-      printf("unlink: remove failed\n");
-      return r;
-    }
-    
+    std::cout<<"[yfs_client] unlink begin"<<std::endl;
+	bool found = false;
+	inum ino_out;
+	lc->acquire(parent);
+	if(lookup(parent,name,found,ino_out) != OK)
+		{lc->release(parent);return IOERR;}
+	std::cout<<"[yfs_client] unlink lookup end"<<std::endl;
+	if (found == false)
+		{lc->release(parent);return NOENT;}
+	lc->acquire(ino_out);
+	if(ec->remove(ino_out) != extent_protocol::OK)
+		{lc->release(parent);lc->release(ino_out);return IOERR;}
+	std::cout<<"[yfs_client] unlink ec->remove end"<<std::endl;
+	lc->release(ino_out);
+	std::string buf;
+	if(ec->get(parent,buf)!=extent_protocol::OK)
+		{lc->release(parent);return IOERR;}
+	std::cout<<"[yfs_client] unlink ec->get end"<<std::endl;
+	size_t pos = buf.find(name);
+	size_t size = strlen(name) + filename(ino_out).size() + 2;
+	buf.erase(pos-1,size);
+	if(ec->put(parent,buf) != extent_protocol::OK)
+		{lc->release(parent);return IOERR;}
+	lc->release(parent);
+	std::cout<<"[yfs_client] unlink end"<<std::endl;
     return r;
 }
 
-int
-yfs_client::readlink(inum ino, std::string &data)
-{
-    int r = OK;
-
-    lc->acquire(ino);
-    std::string buf;
-    r = ec->get(ino, buf);
-    lc->release(ino);
-    if (r != OK) {
-      printf("read: file not exist\n");
-      return r;
-    }
-
-    data = buf;
-
-    return r;
-}
-
-int
-yfs_client::symlink(inum parent, const char * name, const char * link, inum & ino_out)
-{
-    int r = OK;
-
-    lc->acquire(parent);
-    std::string buf;
-    r = ec->get(parent, buf);
-    if (r != OK) {
-      printf("symlink: parent directory not exist\n");
-      lc->release(parent);
-      return r;
-    }
-
-    inum id;
-    DirTable table(buf);
-    if (table.lookup(std::string(name), id)) {
-      printf("symlink: already exist\n");
-      lc->release(parent);
-      return EXIST;
-    }
-
-    r = ec->create(extent_protocol::T_SYMLINK, ino_out);
-    if (r != OK) {
-      printf("symlink: creation failure\n");
-      lc->release(parent);
-      return r;
-    }
-
-    r = ec->put(ino_out, std::string(link));
-    if (r != OK) {
-      printf("symlink: writing failed\n");
-      lc->release(parent);
-      return r;
-    }
-    
-    table.insert(std::string(name), ino_out);
-    r = ec->put(parent, table.dump());
-    if (r != OK) {
-      printf("symlink: parent directory update failed\n");
-      lc->release(parent);
-      return r;
-    }
-
-    lc->release(parent);
-    return r;
-}
