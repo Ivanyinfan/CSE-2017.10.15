@@ -10,627 +10,433 @@ max_readahead=0x00020000
    max_background=0
    congestion_threshold=0
    unique: 1, success, outsize: 40
-unique: 2, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4096
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 8
+unique: 2, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
    unique: 2, error: -2 (No such file or directory), outsize: 16
-unique: 3, opcode: MKDIR (9), nodeid: 1, insize: 54, pid: 4096
-[yfs_client] int yfs_client::mkdir begin
-[yfs_client] mkdir acquire finish
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 8
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 8
-[yfs_client] int yfs_client::mkdir end
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 0 0
+unique: 3, opcode: MKDIR (9), nodeid: 1, insize: 54, pid: 21684
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587879 1510587879 1510587879
    unique: 3, success, outsize: 144
-unique: 4, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4096
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000004 0
-issymlink: 4 is not a symbolic link
-getdir 0000000000000004
-   getattr -> 0 0 0
+unique: 4, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
+isfile: 2 is not a file
+getattr 0000000000000002 0
+isfile: 2 is not a file
+getdir 0000000000000002
+   getattr -> 1510587879 1510587879 1510587879
    unique: 4, success, outsize: 144
-unique: 5, opcode: ACCESS (34), nodeid: 4, insize: 48, pid: 4096
+unique: 5, opcode: ACCESS (34), nodeid: 2, insize: 48, pid: 21684
    unique: 5, error: -38 (Function not implemented), outsize: 16
-unique: 6, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 0 0
+unique: 6, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587879 1510587879 1510587879
    unique: 6, success, outsize: 144
-unique: 7, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 0
+unique: 7, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
    unique: 7, error: -2 (No such file or directory), outsize: 16
-unique: 8, opcode: CREATE (35), nodeid: 5, insize: 61, pid: 4097
-issymlink: 5 is not a symbolic link
+unique: 8, opcode: CREATE (35), nodeid: 3, insize: 61, pid: 21685
+isfile: 5 is a file
+getattr 0000000000000005 1
+isfile: 5 is a file
 getfile 0000000000000005
 getfile 0000000000000005 -> sz 0
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 0
+   getattr -> 0
+   unique: 8, success, outsize: 160
+OK: create returns.
+unique: 9, opcode: GETXATTR (22), nodeid: 5, insize: 68, pid: 21685
+   unique: 9, error: -38 (Function not implemented), outsize: 16
+unique: 10, opcode: WRITE (16), nodeid: 5, insize: 84, pid: 21685
+   unique: 10, success, outsize: 24
+unique: 11, opcode: FLUSH (25), nodeid: 5, insize: 64, pid: 21685
+   unique: 11, error: -38 (Function not implemented), outsize: 16
+unique: 12, opcode: RELEASE (18), nodeid: 5, insize: 64, pid: 0
+   unique: 12, success, outsize: 16
+unique: 13, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587880 1510587880 1510587880
+   unique: 13, success, outsize: 144
+unique: 14, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
+   unique: 14, error: -2 (No such file or directory), outsize: 16
+unique: 15, opcode: CREATE (35), nodeid: 3, insize: 61, pid: 21685
 isfile: 6 is a file
 getattr 0000000000000006 1
 isfile: 6 is a file
 getfile 0000000000000006
 getfile 0000000000000006 -> sz 0
    getattr -> 0
-   unique: 8, success, outsize: 160
+   unique: 15, success, outsize: 160
 OK: create returns.
-unique: 9, opcode: GETXATTR (22), nodeid: 6, insize: 68, pid: 4097
-   unique: 9, error: -38 (Function not implemented), outsize: 16
-unique: 10, opcode: WRITE (16), nodeid: 6, insize: 84, pid: 4097
-   unique: 10, success, outsize: 24
-unique: 11, opcode: FLUSH (25), nodeid: 6, insize: 64, pid: 4097
-   unique: 11, error: -38 (Function not implemented), outsize: 16
-unique: 12, opcode: RELEASE (18), nodeid: 6, insize: 64, pid: 0
-   unique: 12, success, outsize: 16
-unique: 13, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 419193703 419193703
-   unique: 13, success, outsize: 144
-unique: 14, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 7
-   unique: 14, error: -2 (No such file or directory), outsize: 16
-unique: 15, opcode: CREATE (35), nodeid: 5, insize: 61, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 7
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 7
+unique: 16, opcode: WRITE (16), nodeid: 6, insize: 84, pid: 21685
+   unique: 16, success, outsize: 24
+unique: 17, opcode: RELEASE (18), nodeid: 6, insize: 64, pid: 0
+   unique: 17, success, outsize: 16
+unique: 18, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587880 1510587880 1510587880
+   unique: 18, success, outsize: 144
+unique: 19, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
+   unique: 19, error: -2 (No such file or directory), outsize: 16
+unique: 20, opcode: CREATE (35), nodeid: 3, insize: 61, pid: 21685
 isfile: 8 is a file
 getattr 0000000000000008 1
 isfile: 8 is a file
 getfile 0000000000000008
 getfile 0000000000000008 -> sz 0
    getattr -> 0
-   unique: 15, success, outsize: 160
+   unique: 20, success, outsize: 160
 OK: create returns.
-unique: 16, opcode: WRITE (16), nodeid: 8, insize: 84, pid: 4097
-   unique: 16, success, outsize: 24
-unique: 17, opcode: RELEASE (18), nodeid: 8, insize: 64, pid: 0
-   unique: 17, success, outsize: 16
-unique: 18, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 439271836 439271836
-   unique: 18, success, outsize: 144
-unique: 19, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 14
-   unique: 19, error: -2 (No such file or directory), outsize: 16
-unique: 20, opcode: CREATE (35), nodeid: 5, insize: 61, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 14
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 14
+unique: 21, opcode: WRITE (16), nodeid: 8, insize: 84, pid: 21685
+   unique: 21, success, outsize: 24
+unique: 22, opcode: RELEASE (18), nodeid: 8, insize: 64, pid: 0
+   unique: 22, success, outsize: 16
+unique: 23, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587880 1510587880 1510587880
+   unique: 23, success, outsize: 144
+unique: 24, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
+   unique: 24, error: -2 (No such file or directory), outsize: 16
+unique: 25, opcode: CREATE (35), nodeid: 3, insize: 61, pid: 21685
 isfile: 10 is a file
 getattr 000000000000000a 1
 isfile: 10 is a file
 getfile 000000000000000a
 getfile 000000000000000a -> sz 0
    getattr -> 0
-   unique: 20, success, outsize: 160
-OK: create returns.
-unique: 21, opcode: WRITE (16), nodeid: 10, insize: 84, pid: 4097
-   unique: 21, success, outsize: 24
-unique: 22, opcode: RELEASE (18), nodeid: 10, insize: 64, pid: 0
-   unique: 22, success, outsize: 16
-unique: 23, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 455495608 455495608
-   unique: 23, success, outsize: 144
-unique: 24, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 22
-   unique: 24, error: -2 (No such file or directory), outsize: 16
-unique: 25, opcode: CREATE (35), nodeid: 5, insize: 61, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 22
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 22
-isfile: 13 is a file
-getattr 000000000000000d 1
-isfile: 13 is a file
-getfile 000000000000000d
-getfile 000000000000000d -> sz 0
-   getattr -> 0
    unique: 25, success, outsize: 160
 OK: create returns.
-unique: 26, opcode: WRITE (16), nodeid: 13, insize: 84, pid: 4097
+unique: 26, opcode: WRITE (16), nodeid: 10, insize: 84, pid: 21685
    unique: 26, success, outsize: 24
-unique: 27, opcode: RELEASE (18), nodeid: 13, insize: 64, pid: 0
+unique: 27, opcode: RELEASE (18), nodeid: 10, insize: 64, pid: 0
    unique: 27, success, outsize: 16
-unique: 28, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 465954094 465954094
+unique: 28, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587880 1510587880 1510587880
    unique: 28, success, outsize: 144
-unique: 29, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 30
+unique: 29, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
    unique: 29, error: -2 (No such file or directory), outsize: 16
-unique: 30, opcode: CREATE (35), nodeid: 5, insize: 61, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 30
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 30
+unique: 30, opcode: CREATE (35), nodeid: 3, insize: 61, pid: 21685
+isfile: 12 is a file
+getattr 000000000000000c 1
+isfile: 12 is a file
+getfile 000000000000000c
+getfile 000000000000000c -> sz 0
+   getattr -> 0
+   unique: 30, success, outsize: 160
+OK: create returns.
+unique: 31, opcode: WRITE (16), nodeid: 12, insize: 84, pid: 21685
+   unique: 31, success, outsize: 24
+unique: 32, opcode: RELEASE (18), nodeid: 12, insize: 64, pid: 0
+   unique: 32, success, outsize: 16
+unique: 33, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587880 1510587880 1510587880
+   unique: 33, success, outsize: 144
+unique: 34, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
+   unique: 34, error: -2 (No such file or directory), outsize: 16
+unique: 35, opcode: CREATE (35), nodeid: 3, insize: 61, pid: 21685
+isfile: 14 is a file
+getattr 000000000000000e 1
+isfile: 14 is a file
+getfile 000000000000000e
+getfile 000000000000000e -> sz 0
+   getattr -> 0
+   unique: 35, success, outsize: 160
+OK: create returns.
+unique: 36, opcode: WRITE (16), nodeid: 14, insize: 84, pid: 21685
+   unique: 36, success, outsize: 24
+unique: 37, opcode: RELEASE (18), nodeid: 14, insize: 64, pid: 0
+   unique: 37, success, outsize: 16
+unique: 38, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587880 1510587880 1510587880
+   unique: 38, success, outsize: 144
+unique: 39, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
+   unique: 39, error: -2 (No such file or directory), outsize: 16
+unique: 40, opcode: CREATE (35), nodeid: 3, insize: 61, pid: 21685
 isfile: 15 is a file
 getattr 000000000000000f 1
 isfile: 15 is a file
 getfile 000000000000000f
 getfile 000000000000000f -> sz 0
    getattr -> 0
-   unique: 30, success, outsize: 160
+   unique: 40, success, outsize: 160
 OK: create returns.
-unique: 31, opcode: WRITE (16), nodeid: 15, insize: 84, pid: 4097
-   unique: 31, success, outsize: 24
-unique: 32, opcode: RELEASE (18), nodeid: 15, insize: 64, pid: 0
-   unique: 32, success, outsize: 16
-unique: 33, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 478053019 478053019
-   unique: 33, success, outsize: 144
-unique: 34, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 38
-   unique: 34, error: -2 (No such file or directory), outsize: 16
-unique: 35, opcode: CREATE (35), nodeid: 5, insize: 61, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 38
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 38
+unique: 41, opcode: WRITE (16), nodeid: 15, insize: 84, pid: 21685
+   unique: 41, success, outsize: 24
+unique: 42, opcode: RELEASE (18), nodeid: 15, insize: 64, pid: 0
+   unique: 42, success, outsize: 16
+unique: 43, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587880 1510587880 1510587880
+   unique: 43, success, outsize: 144
+unique: 44, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
+   unique: 44, error: -2 (No such file or directory), outsize: 16
+unique: 45, opcode: CREATE (35), nodeid: 3, insize: 61, pid: 21685
 isfile: 17 is a file
 getattr 0000000000000011 1
 isfile: 17 is a file
 getfile 0000000000000011
 getfile 0000000000000011 -> sz 0
    getattr -> 0
-   unique: 35, success, outsize: 160
+   unique: 45, success, outsize: 160
 OK: create returns.
-unique: 36, opcode: WRITE (16), nodeid: 17, insize: 84, pid: 4097
-   unique: 36, success, outsize: 24
-unique: 37, opcode: RELEASE (18), nodeid: 17, insize: 64, pid: 0
-   unique: 37, success, outsize: 16
-unique: 38, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 486367858 486367858
-   unique: 38, success, outsize: 144
-unique: 39, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 46
-   unique: 39, error: -2 (No such file or directory), outsize: 16
-unique: 40, opcode: CREATE (35), nodeid: 5, insize: 61, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 46
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 46
+unique: 46, opcode: WRITE (16), nodeid: 17, insize: 84, pid: 21685
+   unique: 46, success, outsize: 24
+unique: 47, opcode: RELEASE (18), nodeid: 17, insize: 64, pid: 0
+   unique: 47, success, outsize: 16
+unique: 48, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587880 1510587880 1510587880
+   unique: 48, success, outsize: 144
+unique: 49, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
+   unique: 49, error: -2 (No such file or directory), outsize: 16
+unique: 50, opcode: CREATE (35), nodeid: 3, insize: 61, pid: 21685
 isfile: 19 is a file
 getattr 0000000000000013 1
 isfile: 19 is a file
 getfile 0000000000000013
 getfile 0000000000000013 -> sz 0
    getattr -> 0
-   unique: 40, success, outsize: 160
+   unique: 50, success, outsize: 160
 OK: create returns.
-unique: 41, opcode: WRITE (16), nodeid: 19, insize: 84, pid: 4097
-   unique: 41, success, outsize: 24
-unique: 42, opcode: RELEASE (18), nodeid: 19, insize: 64, pid: 0
-   unique: 42, success, outsize: 16
-unique: 43, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 495234343 495234343
-   unique: 43, success, outsize: 144
-unique: 44, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 54
-   unique: 44, error: -2 (No such file or directory), outsize: 16
-unique: 45, opcode: CREATE (35), nodeid: 5, insize: 61, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 54
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 54
+unique: 51, opcode: WRITE (16), nodeid: 19, insize: 84, pid: 21685
+   unique: 51, success, outsize: 24
+unique: 52, opcode: RELEASE (18), nodeid: 19, insize: 64, pid: 0
+   unique: 52, success, outsize: 16
+unique: 53, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587880 1510587880 1510587880
+   unique: 53, success, outsize: 144
+unique: 54, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
+   unique: 54, error: -2 (No such file or directory), outsize: 16
+unique: 55, opcode: CREATE (35), nodeid: 3, insize: 61, pid: 21685
 isfile: 21 is a file
 getattr 0000000000000015 1
 isfile: 21 is a file
 getfile 0000000000000015
 getfile 0000000000000015 -> sz 0
    getattr -> 0
-   unique: 45, success, outsize: 160
-OK: create returns.
-unique: 46, opcode: WRITE (16), nodeid: 21, insize: 84, pid: 4097
-   unique: 46, success, outsize: 24
-unique: 47, opcode: RELEASE (18), nodeid: 21, insize: 64, pid: 0
-   unique: 47, success, outsize: 16
-unique: 48, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 502397008 502397008
-   unique: 48, success, outsize: 144
-unique: 49, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 62
-   unique: 49, error: -2 (No such file or directory), outsize: 16
-unique: 50, opcode: CREATE (35), nodeid: 5, insize: 61, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 62
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 62
-isfile: 23 is a file
-getattr 0000000000000017 1
-isfile: 23 is a file
-getfile 0000000000000017
-getfile 0000000000000017 -> sz 0
-   getattr -> 0
-   unique: 50, success, outsize: 160
-OK: create returns.
-unique: 51, opcode: WRITE (16), nodeid: 23, insize: 84, pid: 4097
-   unique: 51, success, outsize: 24
-unique: 52, opcode: RELEASE (18), nodeid: 23, insize: 64, pid: 0
-   unique: 52, success, outsize: 16
-unique: 53, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 514605483 514605483
-   unique: 53, success, outsize: 144
-unique: 54, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 70
-   unique: 54, error: -2 (No such file or directory), outsize: 16
-unique: 55, opcode: CREATE (35), nodeid: 5, insize: 61, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 70
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 70
-isfile: 25 is a file
-getattr 0000000000000019 1
-isfile: 25 is a file
-getfile 0000000000000019
-getfile 0000000000000019 -> sz 0
-   getattr -> 0
    unique: 55, success, outsize: 160
 OK: create returns.
-unique: 56, opcode: WRITE (16), nodeid: 25, insize: 84, pid: 4097
+unique: 56, opcode: WRITE (16), nodeid: 21, insize: 84, pid: 21685
    unique: 56, success, outsize: 24
-unique: 57, opcode: RELEASE (18), nodeid: 25, insize: 64, pid: 0
+unique: 57, opcode: RELEASE (18), nodeid: 21, insize: 64, pid: 0
    unique: 57, success, outsize: 16
-unique: 58, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 520470817 520470817
+unique: 58, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587880 1510587880 1510587880
    unique: 58, success, outsize: 144
-unique: 59, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
+unique: 59, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
+isfile: 5 is a file
+getattr 0000000000000005 1
+isfile: 5 is a file
 getfile 0000000000000005
-getfile 0000000000000005 -> sz 78
+getfile 0000000000000005 -> sz 4
+   getattr -> 4
+   unique: 59, success, outsize: 144
+unique: 60, opcode: UNLINK (10), nodeid: 3, insize: 45, pid: 21685
+   unique: 60, success, outsize: 16
+unique: 61, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587881 1510587881 1510587881
+   unique: 61, success, outsize: 144
+unique: 62, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
 isfile: 6 is a file
 getattr 0000000000000006 1
 isfile: 6 is a file
 getfile 0000000000000006
 getfile 0000000000000006 -> sz 4
    getattr -> 4
-   unique: 59, success, outsize: 144
-unique: 60, opcode: UNLINK (10), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 78
-   unique: 60, success, outsize: 16
-unique: 61, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 550152738 550152738
-   unique: 61, success, outsize: 144
-unique: 62, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 71
+   unique: 62, success, outsize: 144
+unique: 63, opcode: UNLINK (10), nodeid: 3, insize: 45, pid: 21685
+   unique: 63, success, outsize: 16
+unique: 64, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587881 1510587881 1510587881
+   unique: 64, success, outsize: 144
+unique: 65, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
 isfile: 8 is a file
 getattr 0000000000000008 1
 isfile: 8 is a file
 getfile 0000000000000008
 getfile 0000000000000008 -> sz 4
    getattr -> 4
-   unique: 62, success, outsize: 144
-unique: 63, opcode: UNLINK (10), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 71
-   unique: 63, success, outsize: 16
-unique: 64, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 569639973 569639973
-   unique: 64, success, outsize: 144
-unique: 65, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 64
+   unique: 65, success, outsize: 144
+unique: 66, opcode: UNLINK (10), nodeid: 3, insize: 45, pid: 21685
+   unique: 66, success, outsize: 16
+unique: 67, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587881 1510587881 1510587881
+   unique: 67, success, outsize: 144
+unique: 68, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
 isfile: 10 is a file
 getattr 000000000000000a 1
 isfile: 10 is a file
 getfile 000000000000000a
 getfile 000000000000000a -> sz 4
    getattr -> 4
-   unique: 65, success, outsize: 144
-unique: 66, opcode: UNLINK (10), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 64
-   unique: 66, success, outsize: 16
-unique: 67, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 582662318 582662318
-   unique: 67, success, outsize: 144
-unique: 68, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 56
-isfile: 13 is a file
-getattr 000000000000000d 1
-isfile: 13 is a file
-getfile 000000000000000d
-getfile 000000000000000d -> sz 4
-   getattr -> 4
    unique: 68, success, outsize: 144
 unique: 70, opcode: BATCH_FORGET (42), nodeid: 0, insize: 96, pid: 0
-unique: 69, opcode: UNLINK (10), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 56
+unique: 69, opcode: UNLINK (10), nodeid: 3, insize: 45, pid: 21685
    unique: 69, success, outsize: 16
-unique: 72, opcode: FORGET (2), nodeid: 13, insize: 48, pid: 0
-unique: 71, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 593793642 593793642
+unique: 72, opcode: FORGET (2), nodeid: 10, insize: 48, pid: 0
+unique: 71, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587881 1510587881 1510587881
    unique: 71, success, outsize: 144
-unique: 73, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 48
+unique: 73, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
+isfile: 12 is a file
+getattr 000000000000000c 1
+isfile: 12 is a file
+getfile 000000000000000c
+getfile 000000000000000c -> sz 4
+   getattr -> 4
+   unique: 73, success, outsize: 144
+unique: 74, opcode: UNLINK (10), nodeid: 3, insize: 45, pid: 21685
+   unique: 74, success, outsize: 16
+unique: 76, opcode: FORGET (2), nodeid: 12, insize: 48, pid: 0
+unique: 75, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587881 1510587881 1510587881
+   unique: 75, success, outsize: 144
+unique: 77, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
+isfile: 14 is a file
+getattr 000000000000000e 1
+isfile: 14 is a file
+getfile 000000000000000e
+getfile 000000000000000e -> sz 4
+   getattr -> 4
+   unique: 77, success, outsize: 144
+unique: 78, opcode: UNLINK (10), nodeid: 3, insize: 45, pid: 21685
+   unique: 78, success, outsize: 16
+unique: 80, opcode: FORGET (2), nodeid: 14, insize: 48, pid: 0
+unique: 79, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587881 1510587881 1510587881
+   unique: 79, success, outsize: 144
+unique: 81, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
 isfile: 15 is a file
 getattr 000000000000000f 1
 isfile: 15 is a file
 getfile 000000000000000f
 getfile 000000000000000f -> sz 4
    getattr -> 4
-   unique: 73, success, outsize: 144
-unique: 74, opcode: UNLINK (10), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 48
-   unique: 74, success, outsize: 16
-unique: 76, opcode: FORGET (2), nodeid: 15, insize: 48, pid: 0
-unique: 75, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 601153217 601153217
-   unique: 75, success, outsize: 144
-unique: 77, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 40
+   unique: 81, success, outsize: 144
+unique: 82, opcode: UNLINK (10), nodeid: 3, insize: 45, pid: 21685
+   unique: 82, success, outsize: 16
+unique: 84, opcode: FORGET (2), nodeid: 15, insize: 48, pid: 0
+unique: 83, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587881 1510587881 1510587881
+   unique: 83, success, outsize: 144
+unique: 85, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
 isfile: 17 is a file
 getattr 0000000000000011 1
 isfile: 17 is a file
 getfile 0000000000000011
 getfile 0000000000000011 -> sz 4
    getattr -> 4
-   unique: 77, success, outsize: 144
-unique: 78, opcode: UNLINK (10), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 40
-   unique: 78, success, outsize: 16
-unique: 80, opcode: FORGET (2), nodeid: 17, insize: 48, pid: 0
-unique: 79, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 607329395 607329395
-   unique: 79, success, outsize: 144
-unique: 81, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 32
+   unique: 85, success, outsize: 144
+unique: 86, opcode: UNLINK (10), nodeid: 3, insize: 45, pid: 21685
+   unique: 86, success, outsize: 16
+unique: 88, opcode: FORGET (2), nodeid: 17, insize: 48, pid: 0
+unique: 87, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21685
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587881 1510587881 1510587881
+   unique: 87, success, outsize: 144
+unique: 89, opcode: LOOKUP (1), nodeid: 3, insize: 45, pid: 21685
 isfile: 19 is a file
 getattr 0000000000000013 1
 isfile: 19 is a file
 getfile 0000000000000013
 getfile 0000000000000013 -> sz 4
    getattr -> 4
-   unique: 81, success, outsize: 144
-unique: 82, opcode: UNLINK (10), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 32
-   unique: 82, success, outsize: 16
-unique: 84, opcode: FORGET (2), nodeid: 19, insize: 48, pid: 0
-unique: 83, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 613988676 613988676
-   unique: 83, success, outsize: 144
-unique: 85, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 24
-isfile: 21 is a file
-getattr 0000000000000015 1
-isfile: 21 is a file
-getfile 0000000000000015
-getfile 0000000000000015 -> sz 4
-   getattr -> 4
-   unique: 85, success, outsize: 144
-unique: 86, opcode: UNLINK (10), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 24
-   unique: 86, success, outsize: 16
-unique: 88, opcode: FORGET (2), nodeid: 21, insize: 48, pid: 0
-unique: 87, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4097
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 619382649 619382649
-   unique: 87, success, outsize: 144
-unique: 89, opcode: LOOKUP (1), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 16
-isfile: 23 is a file
-getattr 0000000000000017 1
-isfile: 23 is a file
-getfile 0000000000000017
-getfile 0000000000000017 -> sz 4
-   getattr -> 4
    unique: 89, success, outsize: 144
-unique: 90, opcode: UNLINK (10), nodeid: 5, insize: 45, pid: 4097
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 16
+unique: 90, opcode: UNLINK (10), nodeid: 3, insize: 45, pid: 21685
    unique: 90, success, outsize: 16
-unique: 91, opcode: FORGET (2), nodeid: 23, insize: 48, pid: 0
-unique: 92, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 4096
-issymlink: 1 is not a symbolic link
-getfile 0000000000000001
-getfile 0000000000000001 -> sz 16
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 623408067 623408067
+unique: 91, opcode: FORGET (2), nodeid: 19, insize: 48, pid: 0
+unique: 92, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 21684
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587881 1510587881 1510587881
    unique: 92, success, outsize: 144
-unique: 93, opcode: OPENDIR (27), nodeid: 5, insize: 48, pid: 4096
+unique: 93, opcode: OPENDIR (27), nodeid: 3, insize: 48, pid: 21684
    unique: 93, success, outsize: 32
-unique: 94, opcode: GETATTR (3), nodeid: 5, insize: 56, pid: 4096
-getattr 0000000000000005 0
-issymlink: 5 is not a symbolic link
-getdir 0000000000000005
-   getattr -> 0 623408067 623408067
+unique: 94, opcode: GETATTR (3), nodeid: 3, insize: 56, pid: 21684
+isfile: 3 is not a file
+getattr 0000000000000003 0
+isfile: 3 is not a file
+getdir 0000000000000003
+   getattr -> 1510587881 1510587881 1510587881
    unique: 94, success, outsize: 120
-unique: 95, opcode: READDIR (28), nodeid: 5, insize: 80, pid: 4096
+unique: 95, opcode: READDIR (28), nodeid: 3, insize: 80, pid: 21684
 fuseserver_readdir
-issymlink: 5 is not a symbolic link
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 8
+isdir: 3 is a directory
    unique: 95, success, outsize: 48
-unique: 96, opcode: READDIR (28), nodeid: 5, insize: 80, pid: 4096
+unique: 96, opcode: READDIR (28), nodeid: 3, insize: 80, pid: 21684
 fuseserver_readdir
-issymlink: 5 is not a symbolic link
-issymlink: 5 is not a symbolic link
-getfile 0000000000000005
-getfile 0000000000000005 -> sz 8
+isdir: 3 is a directory
    unique: 96, success, outsize: 16
-unique: 97, opcode: RELEASEDIR (29), nodeid: 5, insize: 64, pid: 0
+unique: 97, opcode: RELEASEDIR (29), nodeid: 3, insize: 64, pid: 0
    unique: 97, success, outsize: 16
-unique: 98, opcode: FORGET (2), nodeid: 4, insize: 48, pid: 0
-unique: 99, opcode: FORGET (2), nodeid: 25, insize: 48, pid: 0
-unique: 100, opcode: FORGET (2), nodeid: 5, insize: 48, pid: 0
-unique: 101, opcode: FORGET (2), nodeid: 1, insize: 48, pid: 0
+unique: 98, opcode: BATCH_FORGET (42), nodeid: 0, insize: 80, pid: 0
 fuse: failed to unmount /home/stu/devlop/lab/yfs2: Invalid argument
