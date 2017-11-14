@@ -9,13 +9,28 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-yfs_client::yfs_client(std::string extent_dst, std::string lock_dst)
+yfs_client::yfs_client()
+{
+  ec = NULL;
+  lc = NULL;
+}
+
+yfs_client::yfs_client(std::string extent_dst, std::string lock_dst, const char* cert_file)
 {
   ec = new extent_client(extent_dst);
   lc = new lock_client(lock_dst);
   if (ec->put(1, "") != extent_protocol::OK)
       printf("error init root dir\n"); // XYB: init root dir
 }
+
+int
+yfs_client::verify(const char* name, unsigned short *uid)
+{
+  	int ret = OK;
+
+	return ret;
+}
+
 
 yfs_client::inum
 yfs_client::n2i(std::string n)
@@ -52,6 +67,7 @@ yfs_client::isfile(inum inum)
     //std::cout<<"[yfs_client] bool yfs_client isfile "<<inum<<" is not a file"<<std::endl;
     return false;
 }
+
 /** Your code here for Lab...
  * You may need to add routines such as
  * readlink, issymlink here to implement symbolic link.
@@ -192,7 +208,7 @@ release:
 
 // Only support set size of attr
 int
-yfs_client::setattr(inum ino, size_t size)
+yfs_client::setattr(inum ino, filestat st, unsigned long toset)
 {
     int r = OK;
 
@@ -201,9 +217,9 @@ yfs_client::setattr(inum ino, size_t size)
      * note: get the content of inode ino, and modify its content
      * according to the size (<, =, or >) content length.
      */
-
-    //std::cout<<"[yfs_client] int yfs_client::setattr begin"<<std::endl;
-	std::string buf;
+     
+	//std::cout<<"[yfs_client] int yfs_client::setattr begin"<<std::endl;
+	/*std::string buf;
     fileinfo fin;
     lc->acquire(ino);
     if(getfile(ino, fin) != OK)
@@ -216,7 +232,7 @@ yfs_client::setattr(inum ino, size_t size)
         buf.append(size-fin.size,'\0');
     if(ec->put(ino,buf) != extent_protocol::OK)
         {lc->release(ino);return IOERR;}
-    lc->release(ino);
+    lc->release(ino);*/
     //std::cout<<"[yfs_client] int yfs_client::setattr end"<<std::endl;
     return r;
 }
