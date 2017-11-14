@@ -25,12 +25,10 @@ disk::read_block(blockid_t id, char *buf)
    *put the content of target block into buf.
    *hint: use memcpy
   */
-  std::cout<<"[disk] read_block begin"<<std::endl;
   if (id < 0 || id >= BLOCK_NUM || buf == NULL)
     return;
 
   memcpy(buf, blocks[id], BLOCK_SIZE);
-  std::cout<<"[disk] read_block end"<<std::endl;
 }
 
 void
