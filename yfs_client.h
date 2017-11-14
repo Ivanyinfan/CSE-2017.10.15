@@ -94,6 +94,11 @@ class yfs_client {
   int symlink(inum,const char *,const char *,inum &);
   int getsymlink(inum inum, symlinkinfo &sin);
   int readlink(inum,std::string&);
+  
+  /* functions for lab5 version control */
+  int commit();
+  int undo();
+  int redo();
 };
 
 #endif 

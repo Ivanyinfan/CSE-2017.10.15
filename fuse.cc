@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <signal.h>
 #include "lang/verify.h"
 #include "yfs_client.h"
 
@@ -542,6 +543,10 @@ void fuseserver_readlink(fuse_req_t req, fuse_ino_t ino)
 
 struct fuse_lowlevel_ops fuseserver_oper;
 
+void fuseserver_commit(int);
+void fuseserver_undo(int);
+void fuseserver_redo(int);
+
 int
 main(int argc, char *argv[])
 {
@@ -590,6 +595,10 @@ main(int argc, char *argv[])
      * */
 	fuseserver_oper.symlink    = fuseserver_symlink;
 	fuseserver_oper.readlink   = fuseserver_readlink;
+	
+	signal(SIGINT,fuseserver_commit);
+	signal(SIGUSR1,fuseserver_undo);
+	signal(SIGUSR2,fuseserver_redo);
 	
     const char *fuse_argv[20];
     int fuse_argc = 0;
@@ -649,4 +658,22 @@ main(int argc, char *argv[])
     fuse_unmount(mountpoint);
 
     return err ? 1 : 0;
+}
+
+void fuseserver_commit(int no)
+{
+	std::cout<<"[fuse] commit begin"<<std::endl;
+	yfs->commit();
+}
+
+void fuseserver_undo(int no)
+{
+	std::cout<<"[fuse] undo begin"<<std::endl;
+	yfs->undo();
+}
+
+void fuseserver_redo(int no)
+{
+	std::cout<<"[fuse] redo begin"<<std::endl;
+	yfs->redo();
 }

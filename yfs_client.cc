@@ -322,11 +322,10 @@ yfs_client::lookup(inum parent, const char *name, bool &found, inum &ino_out)
      * you should design the format of directory content.
      */
 
-	//std::cout<<"[yfs_client] int yfs_client::lookup begin"<<std::endl;
-	//std::cout<<"[yfs_client] int yfs_client::lookup name="<<name<<std::endl;
+	std::cout<<"[yfs_client] int yfs_client::lookup begin"<<std::endl;
+	std::cout<<"[yfs_client] int yfs_client::lookup name="<<name<<std::endl;
 	std::list<dirent> list;
 	found=false;
-	//lc->acquire(parent);
 	if(readdir(parent,list)!= OK)
 		return IOERR;
 	std::string sname = name;
@@ -339,8 +338,7 @@ yfs_client::lookup(inum parent, const char *name, bool &found, inum &ino_out)
 			break;
 		}
 	}
-	//lc->release(parent);
-	//std::cout<<"[yfs_client] int yfs_client::lookup end"<<std::endl;
+	std::cout<<"[yfs_client] int yfs_client::lookup end"<<std::endl;
     return r;
 }
 
@@ -355,14 +353,11 @@ yfs_client::readdir(inum dir, std::list<dirent> &list)
      * and push the dirents to the list.
      */
 
-	//std::cout<<"[yfs_client] int yfs_client::readdir begin"<<std::endl;
+	std::cout<<"[yfs_client] int yfs_client::readdir begin"<<std::endl;
 	std::string buf;
-	fileinfo fin;
 	if(!isdir(dir))
 		return NOENT;
-	if(getfile(dir,fin)!= OK)
-		return IOERR;
-	if(read(dir,fin.size,0,buf) != OK)
+	if(ec->get(dir,buf)!=extent_protocol::OK)
 		return IOERR;
 	char slist[buf.size()];
 	strcpy(slist,buf.c_str());
@@ -501,3 +496,23 @@ int yfs_client::unlink(inum parent,const char *name)
     return r;
 }
 
+int yfs_client::commit()
+{
+	if(ec->commit()!=extent_protocol::OK)
+		return IOERR;
+	return OK;
+}
+
+int yfs_client::undo()
+{
+	if(ec->undo()!=extent_protocol::OK)
+		return IOERR;
+	return OK;
+}
+
+int yfs_client::redo()
+{
+	if(ec->redo()!=extent_protocol::OK)
+		return IOERR;
+	return OK;
+}

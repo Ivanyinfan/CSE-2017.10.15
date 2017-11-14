@@ -4,7 +4,8 @@
 #define inode_h
 
 #include <stdint.h>
-#include <pthread.h>
+#include <vector>
+#include <algorithm>
 #include "extent_protocol.h" // TODO: delete it
 
 #define DISK_SIZE  1024*1024*16
@@ -17,12 +18,14 @@ typedef uint32_t blockid_t;
 
 class disk {
  private:
-  unsigned char blocks[BLOCK_NUM][BLOCK_SIZE];
+  //unsigned char blocks[BLOCK_NUM][BLOCK_SIZE];
 
  public:
   disk();
+  disk(disk *);
   void read_block(uint32_t id, char *buf);
   void write_block(uint32_t id, const char *buf);
+  unsigned char blocks[BLOCK_NUM][BLOCK_SIZE];
 };
 
 // block layer -----------------------------------------
@@ -37,7 +40,9 @@ class block_manager {
  private:
   disk *d;
   std::map <uint32_t, int> using_blocks;
-  pthread_mutex_t bitmap_mutex; 
+  std::vector<disk *> pversion;
+  int version;
+  
  public:
   block_manager();
   struct superblock sb;
@@ -46,6 +51,10 @@ class block_manager {
   void free_block(uint32_t id);
   void read_block(uint32_t id, char *buf);
   void write_block(uint32_t id, const char *buf);
+  
+  void commit();
+  void undo();
+  void redo();
 };
 
 // inode layer -----------------------------------------
@@ -97,6 +106,10 @@ class inode_manager {
   void write_file(uint32_t inum, const char *buf, int size);
   void remove_file(uint32_t inum);
   void getattr(uint32_t inum, extent_protocol::attr &a);
+  
+  void commit();
+  void undo();
+  void redo();
 };
 
 #endif

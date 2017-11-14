@@ -1,13 +1,18 @@
 #include "inode_manager.h"
 #include <cstring>
 #include <ctime>
-#include <pthread.h>
 
 // disk layer -----------------------------------------
 
 disk::disk()
 {
   bzero(blocks, sizeof(blocks));
+}
+
+disk::disk(disk *d)
+{
+	for(int i=0;i<BLOCK_NUM;++i)
+		memcpy(blocks[i],d->blocks[i],BLOCK_SIZE);
 }
 
 void
@@ -20,10 +25,12 @@ disk::read_block(blockid_t id, char *buf)
    *put the content of target block into buf.
    *hint: use memcpy
   */
+  std::cout<<"[disk] read_block begin"<<std::endl;
   if (id < 0 || id >= BLOCK_NUM || buf == NULL)
     return;
 
   memcpy(buf, blocks[id], BLOCK_SIZE);
+  std::cout<<"[disk] read_block end"<<std::endl;
 }
 
 void
@@ -115,6 +122,8 @@ block_manager::block_manager()
   bzero(buf, sizeof(buf));
   std::memcpy(buf, &sb, sizeof(sb));
   write_block(1, buf);
+  
+  version=-1;
 }
 
 void
@@ -439,4 +448,39 @@ inode_manager::remove_file(uint32_t inum)
   }
   free_inode(inum);
   free(ino);
+}
+
+void inode_manager::commit()
+{
+	bm->commit();
+}
+
+void inode_manager::undo()
+{
+	bm->undo();
+}
+
+void inode_manager::redo()
+{
+	bm->redo();
+}
+
+void block_manager::commit()
+{
+	++version;
+	disk *newd=new disk(d);
+	pversion.push_back(d);
+	d=newd;
+}
+
+void block_manager::undo()
+{
+	std::vector<disk *>::iterator it=find(pversion.begin(),pversion.end(),d);
+	d=*(--it);
+}
+
+void block_manager::redo()
+{
+	std::vector<disk *>::iterator it=find(pversion.begin(),pversion.end(),d);
+	d=*(++it);
 }
