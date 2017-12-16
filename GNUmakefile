@@ -1,4 +1,4 @@
-LAB=5
+LAB=6
 SOL=0
 RPC=./rpc
 LAB1GE=$(shell expr $(LAB) \>\= 1)
@@ -8,7 +8,7 @@ LAB4GE=$(shell expr $(LAB) \>\= 4)
 LAB5GE=$(shell expr $(LAB) \>\= 5)
 LAB6GE=$(shell expr $(LAB) \>\= 6)
 LAB7GE=$(shell expr $(LAB) \>\= 7)
-CXXFLAGS =  -g -MMD -I. -I$(RPC) -DLAB=$(LAB) -DSOL=$(SOL) -D_FILE_OFFSET_BITS=64
+CXXFLAGS =  -g -MMD -I. -I$(RPC) -DLAB=$(LAB) -DSOL=$(SOL) -D_FILE_OFFSET_BITS=64 -std=c++11
 FUSEFLAGS= -D_FILE_OFFSET_BITS=64 -DFUSE_USE_VERSION=25 -I/usr/local/include/fuse -I/usr/include/fuse
 
 # choose librpc based on architecture
@@ -52,6 +52,7 @@ lab2: yfs_client
 lab3: yfs_client extent_server test-lab-3-g
 lab4: lock_server lock_tester lock_demo yfs_client extent_server test-lab-4-a test-lab-4-b
 lab5: lock_server lock_tester lock_demo yfs_client extent_server test-lab-5
+lab6: lock_server rsm_tester
 
 lab7: lock_server lock_tester lock_demo yfs_client extent_server test_lab_7
 lab8: lock_tester lock_server rsm_tester
@@ -61,7 +62,7 @@ hfiles1=rpc/fifo.h rpc/connection.h rpc/rpc.h rpc/marshall.h rpc/method_thread.h
 	lock_protocol.h lock_server.h lock_client.h gettime.h gettime.cc lang/verify.h \
         lang/algorithm.h
 hfiles2=yfs_client.h extent_client.h extent_protocol.h extent_server.h
-hfiles3=lock_client_cache.h lock_server_cache.h handle.h tprintf.h
+hfiles3=handle.h tprintf.h
 hfiles4=log.h rsm.h rsm_protocol.h config.h paxos.h paxos_protocol.h rsm_state_transfer.h rsmtest_client.h tprintf.h
 hfiles5=rsm_state_transfer.h rsm_client.h
 rsm_files = rsm.cc paxos.cc config.cc log.cc handle.cc
@@ -76,6 +77,9 @@ lock_tester=lock_tester.cc lock_client.cc
 lock_tester : $(patsubst %.cc,%.o,$(lock_tester)) rpc/$(RPCLIB)
 
 lock_server=lock_server.cc lock_smain.cc
+ifeq ($(LAB6GE),1)
+  lock_server+= $(rsm_files)
+endif
 
 lock_server : $(patsubst %.cc,%.o,$(lock_server)) rpc/$(RPCLIB)
 

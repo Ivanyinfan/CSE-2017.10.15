@@ -21,14 +21,7 @@ class extent_protocol {
     redo
   };
 
-  enum types {
-    T_DIR = 1,
-    T_FILE,
-    T_SYMLINK
-  };
-
   struct attr {
-    uint32_t type;
     unsigned int atime;
     unsigned int mtime;
     unsigned int ctime;
@@ -39,7 +32,6 @@ class extent_protocol {
 inline unmarshall &
 operator>>(unmarshall &u, extent_protocol::attr &a)
 {
-  u >> a.type;
   u >> a.atime;
   u >> a.mtime;
   u >> a.ctime;
@@ -50,7 +42,6 @@ operator>>(unmarshall &u, extent_protocol::attr &a)
 inline marshall &
 operator<<(marshall &m, extent_protocol::attr a)
 {
-  m << a.type;
   m << a.atime;
   m << a.mtime;
   m << a.ctime;
