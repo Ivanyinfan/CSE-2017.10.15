@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include "extent_protocol.h" // TODO: delete it
+#include "gettime.h"
 
 #define DISK_SIZE  1024*1024*16
 #define BLOCK_SIZE 512
@@ -43,6 +44,9 @@ class block_manager {
   std::vector<disk *> pversion;
   int version;
   
+  char *enECC(const char *src);
+  void deECC(char *src,char *dst);
+  
  public:
   block_manager();
   struct superblock sb;
@@ -65,7 +69,9 @@ class block_manager {
 // Inodes per block.
 #define IPB           1
 //(BLOCK_SIZE / sizeof(struct inode))
-// IPB=1 is important for thread-safe
+
+// Blocks for bitmap
+#define BFB (BLOCK_NUM/BPB)
 
 // reserved blocks
 #define RESERVED_BLOCK(ninodes, nblocks)     (2 + ((nblocks) + BPB - 1)/BPB + ((ninodes) + IPB - 1)/IPB)
@@ -113,5 +119,9 @@ class inode_manager {
 };
 
 void* test_daemon(void* arg);
+char checkAndCorrect(char x);
+void string2hex(const char *src);
+void string2hex(const char *src,int size);
+void char2hex(char c);
 #endif
 

@@ -2,7 +2,7 @@
 #define yfs_client_h
 
 #include <string>
-
+#include <time.h>
 #include "lock_protocol.h"
 #include "lock_client.h"
 
@@ -79,7 +79,7 @@ class yfs_client {
   int getdir(inum, dirinfo &);
 
   int setattr(inum, filestat, unsigned long);
-  int lookup(inum, const char *, bool &, inum &);
+  int lookup(inum, const char *, bool &, inum &,bool lock=false);
   int create(inum, const char *, mode_t, inum &);
   int readdir(inum, std::list<dirent> &);
   int write(inum, size_t, off_t, const char *, size_t &);

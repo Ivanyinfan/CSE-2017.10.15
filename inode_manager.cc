@@ -1,10 +1,17 @@
 #include <pthread.h>
 #include <cstring>
 #include <ctime>
-
+#include <time.h>
 #include "inode_manager.h"
 
 // disk layer -----------------------------------------
+
+static time_t gettimesec()
+{
+	struct timespec tp;
+	clock_gettime(CLOCK_REALTIME,&tp);
+	return tp.tv_sec;
+}
 
 disk::disk()
 {
@@ -17,6 +24,12 @@ disk::disk()
 	  printf("FILE %s line %d:Create pthread error\n", __FILE__, __LINE__);
 }
 
+disk::disk(disk *d)
+{
+	for(int i=0;i<BLOCK_NUM;++i)
+		memcpy(blocks[i],d->blocks[i],BLOCK_SIZE);
+}
+
 void
 disk::read_block(blockid_t id, char *buf)
 {
@@ -27,10 +40,12 @@ disk::read_block(blockid_t id, char *buf)
    *put the content of target block into buf.
    *hint: use memcpy
   */
+	//std::cout<<gettimesec()<<"[inode_manager]disk::read_block id="<<id<<std::endl;
   if (id < 0 || id >= BLOCK_NUM || buf == NULL)
     return;
 
   memcpy(buf, blocks[id], BLOCK_SIZE);
+	//std::cout<<gettimesec()<<"[inode_manager] buf=";string2hex(buf,BLOCK_SIZE);printf("\n");
 }
 
 void
@@ -40,6 +55,8 @@ disk::write_block(blockid_t id, const char *buf)
    *your lab1 code goes here.
    *hint: just like read_block
   */
+	//std::cout<<gettimesec()<<"[inode_manager]disk::write_block id="<<id<<std::endl;
+	//std::cout<<gettimesec()<<"[inode_manager] buf=";string2hex(buf,BLOCK_SIZE);printf("\n");
    if (id < 0 || id >= BLOCK_NUM || buf == NULL)
     return;
 
@@ -57,25 +74,16 @@ block_manager::alloc_block()
    * note: you should mark the corresponding bit in block bitmap when alloc.
    * you need to think about which block you can start to be allocated.
    */
-  char buf[BLOCK_SIZE];
-  blockid_t cur = 0;
-  while (cur < sb.nblocks) {
-    read_block(BBLOCK(cur), buf);
-    for (int i = 0; i < BLOCK_SIZE && cur < sb.nblocks; ++i) {
-      unsigned char mask = 0x80;
-      while (mask > 0 && cur < sb.nblocks) {
-        if ((buf[i] & mask) == 0) {
-          buf[i] = buf[i] | mask;
-          write_block(BBLOCK(cur), buf);
-          return cur;
-        }
-        mask = mask >> 1;
-        ++cur;
-      }
-    }
-  }
-  printf("\tim: error! out of blocks\n");
-  exit(0);
+	int start=2+BFB+INODE_NUM/IPB;
+	for(int i=start;i<BLOCK_NUM;i+=2)
+	{
+		if(using_blocks.find(i)==using_blocks.end())
+		{
+			using_blocks[i]=1;
+			using_blocks[++i]=1;
+			return --i;
+		}
+	}
 }
 
 void
@@ -85,14 +93,8 @@ block_manager::free_block(uint32_t id)
    * your lab1 code goes here.
    * note: you should unmark the corresponding bit in the block bitmap when free.
    */
-  char buf[BLOCK_SIZE];
-  read_block(BBLOCK(id), buf);
-
-  int index = (id % BPB) >> 3;
-  unsigned char mask = 0xFF ^ (1 << (7 - ((id % BPB) & 0x7)));
-  buf[index] = buf[index] & mask;
-
-  write_block(BBLOCK(id), buf);
+  	using_blocks.erase(id);
+  	using_blocks.erase(++id);
 }
 
 block_manager::block_manager()
@@ -102,26 +104,6 @@ block_manager::block_manager()
   sb.size = BLOCK_SIZE * BLOCK_NUM;
   sb.nblocks = BLOCK_NUM;
   sb.ninodes = INODE_NUM;
-
-  char buf[BLOCK_SIZE];
-  blockid_t cur = 0;
-  blockid_t ending = RESERVED_BLOCK(sb.ninodes, sb.nblocks);
-  while (cur < ending) {
-    read_block(BBLOCK(cur), buf);
-    for (int i = 0; i < BLOCK_SIZE && cur < ending; ++i) {
-      unsigned char mask = 0x80;
-      while (mask > 0 && cur < ending) {
-        buf[i] = buf[i] | mask;
-        mask = mask >> 1;
-        ++cur;
-      }
-    }
-    write_block(BBLOCK(cur - 1), buf);
-  }
-
-  bzero(buf, sizeof(buf));
-  std::memcpy(buf, &sb, sizeof(sb));
-  write_block(1, buf);
   
   version=-1;
 }
@@ -129,13 +111,28 @@ block_manager::block_manager()
 void
 block_manager::read_block(uint32_t id, char *buf)
 {
-  d->read_block(id, buf);
+	//std::cout<<gettimesec()<<"[inode_manager]block_manager::read_block id="<<id<<std::endl;
+	char buffer[2*BLOCK_SIZE];
+	d->read_block(id,buffer);
+	char *cur=buffer+BLOCK_SIZE;
+	d->read_block(++id,cur);
+	deECC(buffer,buf);
+	//std::cout<<gettimesec()<<"[inode_manager]block_manager::read_block buf="<<buf<<std::endl;
 }
 
 void
 block_manager::write_block(uint32_t id, const char *buf)
 {
-  d->write_block(id, buf);
+	//std::cout<<gettimesec()<<"[inode_manager]block_manager::write_block id="<<id<<std::endl;
+	//std::cout<<gettimesec()<<"[inode_manager]block_manager::write_block buf="<<buf<<std::endl;
+	char *buffer=enECC(buf);
+	//std::cout<<gettimesec()<<"[inode_manager] buffer=";string2hex(buffer,2*BLOCK_SIZE);printf("\n");
+	d->write_block(id, buffer);
+	if(using_blocks.find(++id)==using_blocks.end())
+		using_blocks[id]=1;
+	char *tmp=buffer+BLOCK_SIZE;
+	d->write_block(id,tmp);
+	delete buffer;
 }
 
 // inode layer -----------------------------------------
@@ -160,6 +157,7 @@ inode_manager::alloc_inode(uint32_t type)
    * note: the normal inode block should begin from the 2nd inode block.
    * the 1st is used for root_dir, see inode_manager::inode_manager().
    */
+	//std::cout<<gettimesec()<<"[inode_manager]inode_manager::alloc_inode type="<<type<<std::endl;
   char buf[BLOCK_SIZE];
   uint32_t cur = 1;
   while (cur <= bm->sb.ninodes) {
@@ -175,7 +173,7 @@ inode_manager::alloc_inode(uint32_t type)
         bm->write_block(IBLOCK(cur, bm->sb.nblocks), buf);
         return cur;
       }
-      ++cur;
+      cur+=2;
     }
   }
   printf("\tim: error! out of inodes\n");
@@ -190,6 +188,7 @@ inode_manager::free_inode(uint32_t inum)
    * note: you need to check if the inode is already a freed one;
    * if not, clear it, and remember to write back to disk.
    */
+	//std::cout<<gettimesec()<<"[inode_manager]inode_manager::free_inode inum="<<inum<<std::endl;
   char buf[BLOCK_SIZE];
   bm->read_block(IBLOCK(inum, bm->sb.nblocks), buf);
   inode_t * ino = (inode_t *)buf + (inum - 1) % IPB;
@@ -235,6 +234,7 @@ inode_manager::get_inode(uint32_t inum)
 void
 inode_manager::put_inode(uint32_t inum, struct inode *ino)
 {
+	//std::cout<<gettimesec()<<"[inode_manager]inode_manager::put_inode inum="<<inum<<std::endl;
   char buf[BLOCK_SIZE];
   struct inode *ino_disk;
 
@@ -258,6 +258,7 @@ inode_manager::read_file(uint32_t inum, char **buf_out, int *size)
    * note: read blocks related to inode number inum,
    * and copy them to buf_Out
    */
+	//std::cout<<gettimesec()<<"[inode_manager]inode_manager::read_file inum="<<inum<<std::endl;
   char block[BLOCK_SIZE];
   inode_t * ino = get_inode(inum);
   char * buf = (char *)malloc(ino->size);
@@ -308,6 +309,7 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size)
    * you need to consider the situation when the size of buf 
    * is larger or smaller than the size of original inode
    */
+	//std::cout<<gettimesec()<<"[inode_manager]inode_manager::write_file inum="<<inum<<std::endl;
   char block[BLOCK_SIZE];
   char indirect[BLOCK_SIZE];
   inode_t * ino = get_inode(inum);
@@ -409,6 +411,7 @@ inode_manager::getattr(uint32_t inum, extent_protocol::attr &a)
    * note: get the attributes of inode inum.
    * you can refer to "struct attr" in extent_protocol.h
    */
+	//std::cout<<gettimesec()<<"[inode_manager]inode_manager::getatt inum="<<inum<<std::endl;
   inode_t * ino = get_inode(inum);
 
   if (ino) {
@@ -429,6 +432,7 @@ inode_manager::remove_file(uint32_t inum)
    * your lab1 code goes here
    * note: you need to consider about both the data block and inode of the file
    */
+	//std::cout<<gettimesec()<<"[inode_manager]inode_manager::remove_file inum="<<inum<<std::endl;
   inode_t * ino = get_inode(inum);
   unsigned int block_num = (ino->size + BLOCK_SIZE - 1) / BLOCK_SIZE;
   if (block_num <= NDIRECT) {
@@ -483,4 +487,96 @@ void block_manager::redo()
 {
 	std::vector<disk *>::iterator it=find(pversion.begin(),pversion.end(),d);
 	d=*(++it);
+}
+
+char *block_manager::enECC(const char *src)
+{
+	//std::cout<<gettimesec()<<"[inode_manager]block_manager::enECC src=";string2hex(src);printf("\n");
+	char *ret=new char[2*BLOCK_SIZE];
+	char *cur=ret;
+	char before,after;
+	char p1,p2,p4;
+	for(int i=0;i<BLOCK_SIZE;++i,++src,cur++)
+	{
+		before=*src;
+		after=((before&0x80)>>2)|((before&0x40)>>3)|((before&0x20)>>3)|((before&0x10)>>3);
+		p1=(((after&0x2)>>1)^((after&0x8)>>3)^((after&0x20)>>5))<<7;
+		p2=(((after&0x2)>>1)^((after&0x4)>>2)^((after&0x20)>>5))<<6;
+		p4=(((after&0x2)>>1)^((after&0x4)>>2)^((after&0x8)>>3))<<4;
+		after|=p1|p2|p4;
+		*cur=after;
+		cur++;
+		after=((before&0x8)<<2)|((before&0x4)<<1)|((before&0x2)<<1)|((before&0x1)<<1);
+		p1=(((after&0x2)>>1)^((after&0x8)>>3)^((after&0x20)>>5))<<7;
+		p2=(((after&0x2)>>1)^((after&0x4)>>2)^((after&0x20)>>5))<<6;
+		p4=(((after&0x2)>>1)^((after&0x4)>>2)^((after&0x8)>>3))<<4;
+		after|=p1|p2|p4;
+		*cur=after;
+	}
+	//std::cout<<gettimesec()<<"[inode_manager]block_manager::enECC ret=";string2hex(ret);//printf("\n");
+	return ret;
+}
+
+void block_manager::deECC(char *src,char *dst)
+{
+	//std::cout<<gettimesec()<<"[inode_manager]block_manager::deECC src=";string2hex(src);printf("\n");
+	char *cur=dst;
+	char before,ecc,after;
+	for(int i=0;i<BLOCK_SIZE;++i,++src,cur++)
+	{
+		before=*src++;
+		before=checkAndCorrect(before);
+		after=((before&0x20)<<2)|((before&0x8)<<3)|((before&0x4)<<3)|((before&0x2)<<3);
+		before=*src;
+		before=checkAndCorrect(before);
+		after|=((before&0x20)>>2)|((before&0x8)>>1)|((before&0x4)>>1)|((before&0x2)>>1);
+		*cur=after;
+	}
+	//std::cout<<gettimesec()<<"[inode_manager]block_manager::deECC dst=";string2hex(dst);printf("\n");
+}
+
+char checkAndCorrect(char x)
+{
+	char c=x;
+	bool p1=((c&0x80)==((((c&0x2)>>1)^((c&0x8)>>3)^((c&0x20)>>5))<<7));
+	bool p2=((c&0x40)==((((c&0x2)>>1)^((c&0x4)>>2)^((c&0x20)>>5))<<6));
+	bool p4=((c&0x10)==((((c&0x2)>>1)^((c&0x4)>>2)^((c&0x8)>>3))<<4));
+	int p=p1<<2|p2<<1|p4;
+	switch(p)
+	{
+		case 0:c^=0x2;break;
+		case 1:c^=0x20;break;
+		case 2:c^=0x8;break;
+		case 3:c^=0x80;break;
+		case 4:c^=0x4;break;
+		case 5:c^=0x40;break;
+		case 6:c^=0x10;break;
+	}
+	return c;
+}
+
+// for debug purpose
+void string2hex(const char *src)
+{
+	int len=strlen(src);
+	for(int i=0;i<len;++i,++src)
+	{
+		int tmp=int(*src);
+		printf("0x%X ",tmp);
+	}
+}
+
+void string2hex(const char *src,int size)
+{
+	for(int i=0;i<size;++i,++src)
+	{
+		int tmp=int(*src);
+		printf("0x%X ",tmp);
+	}
+}
+
+void char2hex(char c)
+{
+	unsigned int tmp=(unsigned int)c;
+	printf("0x%X ",tmp);
 }

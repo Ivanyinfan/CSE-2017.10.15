@@ -9,6 +9,13 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+static time_t gettimesec()
+{
+	struct timespec tp;
+	clock_gettime(CLOCK_REALTIME,&tp);
+	return tp.tv_sec;
+}
+
 yfs_client::yfs_client()
 {
   ec = NULL;
@@ -64,7 +71,7 @@ yfs_client::isfile(inum inum)
         return true;
     } 
     //printf("isfile: %lld is a dir\n", inum);
-    //std::cout<<"[yfs_client] bool yfs_client isfile "<<inum<<" is not a file"<<std::endl;
+    //std::cout<<gettimesec()<<"[yfs_client] bool yfs_client isfile "<<inum<<" is not a file"<<std::endl;
     return false;
 }
 
@@ -93,12 +100,12 @@ bool yfs_client::issymlink(inum inum)
 
 int yfs_client::symlink(inum parent,const char *name,const char *link,inum &ino_out)
 {
-	//std::cout<<"[yfs_client] int yfs_client::symlink begin"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::symlink begin"<<std::endl;
 	lc->acquire(parent);
 	if(!isdir(parent))
         {lc->release(parent);return IOERR;}
 	bool found=false;
-	if(lookup(parent,name,found,ino_out)!=OK)
+	if(lookup(parent,name,found,ino_out,true)!=OK)
 		{lc->release(parent);return IOERR;}
 	if(found)
 		{lc->release(parent);return EXIST;}
@@ -111,7 +118,7 @@ int yfs_client::symlink(inum parent,const char *name,const char *link,inum &ino_
 	std::string sname=name;
 	std::string sinum=filename(ino_out);
 	buf.append("/"+sname+"/"+sinum);
-	//std::cout<<"[yfs_client] int yfs_client::symlink buf="<<buf<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::symlink buf="<<buf<<std::endl;
 	if(ec->put(parent,buf)!=extent_protocol::OK)
 		{lc->release(parent);lc->release(ino_out);return IOERR;}
 	/*size_t bytes_written;
@@ -122,7 +129,7 @@ int yfs_client::symlink(inum parent,const char *name,const char *link,inum &ino_
         {lc->release(parent);lc->release(ino_out);return IOERR;}
     lc->release(ino_out);
 	lc->release(parent);
-	//std::cout<<"[yfs_client] int yfs_client::symlink end"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::symlink end"<<std::endl;
 	return OK;
 }
 
@@ -140,11 +147,11 @@ int yfs_client::getsymlink(inum inum, symlinkinfo &sin)
 
 int yfs_client::readlink(inum inum,std::string &path)
 {
-	//std::cout<<"[yfs_client] int yfs_client::readlink begin"<<std::endl;
-	//std::cout<<"[yfs_client] int yfs_client::readlink inum="<<inum<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::readlink begin"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::readlink inum="<<inum<<std::endl;
 	if (ec->get(inum, path) != extent_protocol::OK)
         return IOERR;
-    //std::cout<<"[yfs_client] int yfs_client::readlink end"<<std::endl;
+    //std::cout<<gettimesec()<<"[yfs_client] int yfs_client::readlink end"<<std::endl;
 	return OK;
 }
 
@@ -152,7 +159,7 @@ bool
 yfs_client::isdir(inum inum)
 {
     // Oops! is this still correct when you implement symlink?
-    //std::cout<<"[yfs_client] int yfs_client::isdir begin"<<std::endl;
+    //std::cout<<gettimesec()<<"[yfs_client] int yfs_client::isdir begin"<<std::endl;
     return ! isfile(inum)&&!issymlink(inum);
 }
 
@@ -218,7 +225,7 @@ yfs_client::setattr(inum ino, filestat st, unsigned long toset)
      * according to the size (<, =, or >) content length.
      */
      
-	//std::cout<<"[yfs_client] int yfs_client::setattr begin"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::setattr begin"<<std::endl;
 	/*std::string buf;
     fileinfo fin;
     lc->acquire(ino);
@@ -233,7 +240,7 @@ yfs_client::setattr(inum ino, filestat st, unsigned long toset)
     if(ec->put(ino,buf) != extent_protocol::OK)
         {lc->release(ino);return IOERR;}
     lc->release(ino);*/
-    //std::cout<<"[yfs_client] int yfs_client::setattr end"<<std::endl;
+    //std::cout<<gettimesec()<<"[yfs_client] int yfs_client::setattr end"<<std::endl;
     return r;
 }
 
@@ -248,29 +255,30 @@ yfs_client::create(inum parent, const char *name, mode_t mode, inum &ino_out)
      * after create file or dir, you must remember to modify the parent infomation.
      */
 
-    std::cout<<"[yfs_client] int yfs_client::create begin"<<std::endl;
-    std::cout<<"[yfs_client] int yfs_client::create parent="<<parent<<std::endl;
+    //std::cout<<gettimesec()<<"[yfs_client] int yfs_client::create begin"<<std::endl;
+    //std::cout<<gettimesec()<<"[yfs_client] int yfs_client::create parent="<<parent<<std::endl;
 	bool found = false;
 	lc->acquire(parent);
-	if(lookup(parent,name,found,ino_out) != OK)
+	if(lookup(parent,name,found,ino_out,true) != OK)
 		{lc->release(parent);return IOERR;}
-	std::cout<<"[yfs_client] create lookup end"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] create lookup end"<<std::endl;
 	if (found)
 		{lc->release(parent);return EXIST;}
 	if( ec->create(extent_protocol::T_FILE, ino_out) != extent_protocol::OK)
 		{lc->release(parent);return IOERR;}
-	std::cout<<"[yfs_client] create ec->create end"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] create ec->create end"<<std::endl;
     std::string buf;
 	if(ec->get(parent,buf)!=extent_protocol::OK)
 		{lc->release(parent);return IOERR;}
-	std::cout<<"[yfs_client] create ec->get end"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] create ec->get buf="<<buf<<std::endl;
 	std::string sname = name;
 	std::string sinum = filename(ino_out);
 	buf.append("/" + sname + "/" + sinum);
+	//std::cout<<gettimesec()<<"[yfs_client] create ec->put buf="<<buf<<std::endl;
 	if(ec->put(parent,buf) != extent_protocol::OK)
 		{lc->release(parent);return IOERR;}
 	lc->release(parent);
-	//std::cout<<"[yfs_client] int yfs_client::create end"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::create end"<<std::endl;
     return r;
 }
 
@@ -285,11 +293,11 @@ yfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &ino_out)
      * after create file or dir, you must remember to modify the parent infomation.
      */
 
-    std::cout<<"[yfs_client] int yfs_client::mkdir begin"<<std::endl;
+    //std::cout<<gettimesec()<<"[yfs_client] int yfs_client::mkdir begin"<<std::endl;
 	bool found=false;
 	lc->acquire(parent);
-	std::cout<<"[yfs_client] mkdir acquire finish"<<std::endl;
-	if(lookup(parent,name,found,ino_out)!=OK)
+	//std::cout<<gettimesec()<<"[yfs_client] mkdir acquire finish"<<std::endl;
+	if(lookup(parent,name,found,ino_out,true)!=OK)
 		{lc->release(parent);return IOERR;}
 	if(found)
 		{lc->release(parent);return EXIST;}
@@ -307,12 +315,12 @@ yfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &ino_out)
 	if(ec->put(parent,buf) != extent_protocol::OK)
 		{lc->release(parent);return IOERR;}
 	lc->release(parent);
-	std::cout<<"[yfs_client] int yfs_client::mkdir end"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::mkdir end"<<std::endl;
     return r;
 }
 
 int
-yfs_client::lookup(inum parent, const char *name, bool &found, inum &ino_out)
+yfs_client::lookup(inum parent, const char *name, bool &found, inum &ino_out,bool lock)
 {
     int r = OK;
 
@@ -322,10 +330,12 @@ yfs_client::lookup(inum parent, const char *name, bool &found, inum &ino_out)
      * you should design the format of directory content.
      */
 
-	std::cout<<"[yfs_client] int yfs_client::lookup begin"<<std::endl;
-	std::cout<<"[yfs_client] int yfs_client::lookup name="<<name<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::lookup begin"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::lookup name="<<name<<std::endl;
 	std::list<dirent> list;
 	found=false;
+	if(!lock)
+		lc->acquire(parent);
 	if(readdir(parent,list)!= OK)
 		return IOERR;
 	std::string sname = name;
@@ -338,7 +348,9 @@ yfs_client::lookup(inum parent, const char *name, bool &found, inum &ino_out)
 			break;
 		}
 	}
-	std::cout<<"[yfs_client] int yfs_client::lookup end"<<std::endl;
+	if(!lock)
+		lc->release(parent);
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::lookup end"<<std::endl;
     return r;
 }
 
@@ -353,7 +365,7 @@ yfs_client::readdir(inum dir, std::list<dirent> &list)
      * and push the dirents to the list.
      */
 
-	std::cout<<"[yfs_client] int yfs_client::readdir begin"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::readdir begin"<<std::endl;
 	std::string buf;
 	if(!isdir(dir))
 		return NOENT;
@@ -368,12 +380,12 @@ yfs_client::readdir(inum dir, std::list<dirent> &list)
 		temp.name=tokenPtr;
 		tokenPtr=strtok(NULL,"/");
 		temp.inum=atoi(tokenPtr);
-		//std::cout<<"[yfs_client] int yfs_client::readdir temp.name="<<temp.name<<std::endl;
-		//std::cout<<"[yfs_client] int yfs_client::readdir temp.inum="<<temp.inum<<std::endl;
+		//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::readdir temp.name="<<temp.name<<std::endl;
+		//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::readdir temp.inum="<<temp.inum<<std::endl;
 		list.push_back(temp);
 		tokenPtr=strtok(NULL,"/");
 	}
-	//std::cout<<"[yfs_client] int yfs_client::readdir end"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::readdir end"<<std::endl;
     return r;
 }
 
@@ -405,16 +417,16 @@ yfs_client::write(inum ino, size_t size, off_t off, const char *data,
      * when off > length of original file, fill the holes with '\0'.
      */
 
-    /*std::cout<<"[yfs_client] int yfs_client::write begin"<<std::endl;
-    std::cout<<"[yfs_client] int yfs_client::write size="<<size<<std::endl;
-    std::cout<<"[yfs_client] int yfs_client::write off="<<off<<std::endl;
+    /*//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::write begin"<<std::endl;
+    //std::cout<<gettimesec()<<"[yfs_client] int yfs_client::write size="<<size<<std::endl;
+    //std::cout<<gettimesec()<<"[yfs_client] int yfs_client::write off="<<off<<std::endl;
 	std::string buf;
 	fileinfo fin;
 	if(getfile(ino,fin)!= OK)
 		return IOERR;
 	if(read(ino,fin.size,0,buf) != OK)
 		return IOERR;
-	std::cout<<"[yfs_client] int yfs_client::write buf.size()="<<buf.size()<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::write buf.size()="<<buf.size()<<std::endl;
 	std::string sdata = data;
 	sdata = sdata.substr(0,size);
 	int newSize = off+size;
@@ -436,12 +448,12 @@ yfs_client::write(inum ino, size_t size, off_t off, const char *data,
 	{
 		buf.resize(off+size);
 		buf.replace(off,size,sdata);
-		//std::cout<<"[yfs_client] int yfs_client::buf="<<buf<<std::endl;
+		//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::buf="<<buf<<std::endl;
 		bytes_written = size;
 		if(ec->put(ino,buf) != extent_protocol::OK)
 			return IOERR;
 	}*/
-	//std::cout<<"[yfs_client] int yfs_client::write begin"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::write begin"<<std::endl;
 	std::string buf;
 	lc->acquire(ino);
     if (ec->get(ino, buf) != extent_protocol::OK)
@@ -454,7 +466,7 @@ yfs_client::write(inum ino, size_t size, off_t off, const char *data,
     if (ec->put(ino, buf) != extent_protocol::OK)
         {lc->release(ino);return IOERR;}
     lc->release(ino);
-	//std::cout<<"[yfs_client] int yfs_client::write end"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] int yfs_client::write end"<<std::endl;
     return r;
 }
 
@@ -468,31 +480,31 @@ int yfs_client::unlink(inum parent,const char *name)
      * and update the parent directory content.
      */
 
-    std::cout<<"[yfs_client] unlink begin"<<std::endl;
+    //std::cout<<gettimesec()<<"[yfs_client] unlink begin"<<std::endl;
 	bool found = false;
 	inum ino_out;
 	lc->acquire(parent);
-	if(lookup(parent,name,found,ino_out) != OK)
+	if(lookup(parent,name,found,ino_out,true) != OK)
 		{lc->release(parent);return IOERR;}
-	std::cout<<"[yfs_client] unlink lookup end"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] unlink lookup end"<<std::endl;
 	if (found == false)
 		{lc->release(parent);return NOENT;}
 	lc->acquire(ino_out);
 	if(ec->remove(ino_out) != extent_protocol::OK)
 		{lc->release(parent);lc->release(ino_out);return IOERR;}
-	std::cout<<"[yfs_client] unlink ec->remove end"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] unlink ec->remove end"<<std::endl;
 	lc->release(ino_out);
 	std::string buf;
 	if(ec->get(parent,buf)!=extent_protocol::OK)
 		{lc->release(parent);return IOERR;}
-	std::cout<<"[yfs_client] unlink ec->get end"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] unlink ec->get end"<<std::endl;
 	size_t pos = buf.find(name);
 	size_t size = strlen(name) + filename(ino_out).size() + 2;
 	buf.erase(pos-1,size);
 	if(ec->put(parent,buf) != extent_protocol::OK)
 		{lc->release(parent);return IOERR;}
 	lc->release(parent);
-	std::cout<<"[yfs_client] unlink end"<<std::endl;
+	//std::cout<<gettimesec()<<"[yfs_client] unlink end"<<std::endl;
     return r;
 }
 
