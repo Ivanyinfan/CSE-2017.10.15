@@ -112,5 +112,6 @@ class inode_manager {
   void redo();
 };
 
+void* test_daemon(void* arg);
 #endif
 

@@ -1,18 +1,20 @@
-#include "inode_manager.h"
+#include <pthread.h>
 #include <cstring>
 #include <ctime>
+
+#include "inode_manager.h"
 
 // disk layer -----------------------------------------
 
 disk::disk()
 {
+  pthread_t id;
+  int ret;
   bzero(blocks, sizeof(blocks));
-}
 
-disk::disk(disk *d)
-{
-	for(int i=0;i<BLOCK_NUM;++i)
-		memcpy(blocks[i],d->blocks[i],BLOCK_SIZE);
+  ret = pthread_create(&id, NULL, test_daemon, (void*)blocks);
+  if(ret != 0)
+	  printf("FILE %s line %d:Create pthread error\n", __FILE__, __LINE__);
 }
 
 void
